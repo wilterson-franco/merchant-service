@@ -1,14 +1,19 @@
 package com.wilterson.cms.application.domain.model;
 
 import com.wilterson.cms.common.StringGenerator;
-import lombok.Builder;
+import com.wilterson.cms.common.validation.Validatable;
+import java.util.Collection;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
-@Builder(builderMethodName = "hiddenBuilder")
-public record Merchant(String name, String guid, MerchantType type) {
+@Data
+@RequiredArgsConstructor
+public class Merchant implements Validatable {
 
-    public static MerchantBuilder builder(String name) {
-        return hiddenBuilder()
-                .name(name)
-                .guid(StringGenerator.generate(16));
-    }
+    private static final int GUID_LENGTH = 16;
+
+    private final String guid = StringGenerator.generate(GUID_LENGTH);
+    private final String name;
+    private final MerchantType type;
+    private final Collection<Location> locations;
 }
