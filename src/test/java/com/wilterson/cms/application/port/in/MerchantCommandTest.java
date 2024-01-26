@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.wilterson.cms.application.domain.model.Location;
 import com.wilterson.cms.application.domain.model.MerchantType;
+import jakarta.validation.ConstraintViolationException;
 import java.util.Collections;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class MerchantCommandTest {
 
@@ -34,18 +37,19 @@ public class MerchantCommandTest {
             assertThat(command.name()).isEqualTo("The Home Depot");
         }
 
-        @Test
-        void whenBlankName_thenItShouldThrowException() {
+        @ParameterizedTest
+        @NullAndEmptySource
+        @ValueSource(strings = {" ", "\t", "\n"})
+        void whenBlankName_thenItShouldThrowException(String emptyName) {
 
             // given
             Location location = new Location(true);
-            String emptyName = "      ";
             MerchantType merchantType = MerchantType.SINGLE_MERCHANT;
             Set<Location> locations = Collections.singleton(location);
 
             // when
             // then
-            assertThrows(IllegalArgumentException.class, () -> new MerchantCommand(emptyName, merchantType, locations));
+            assertThrows(ConstraintViolationException.class, () -> new MerchantCommand(emptyName, merchantType, locations));
         }
 
         @DisplayName("given the merchant type " +

@@ -6,11 +6,15 @@ import com.wilterson.cms.common.validation.SemanticValidator;
 import com.wilterson.cms.common.validation.SyntacticValidator;
 import com.wilterson.cms.common.validation.Validatable;
 import io.micrometer.common.util.StringUtils;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collection;
 import org.springframework.util.CollectionUtils;
 
-public record MerchantCommand(@NotNull String name, @NotNull MerchantType type, Collection<Location> locations) implements Validatable {
+public record MerchantCommand(
+        @NotBlank(message = "{merchant.name.required}") String name,
+        @NotNull(message = "Type can't be null") MerchantType type,
+        Collection<Location> locations) implements Validatable {
 
     public MerchantCommand(String name, MerchantType type, Collection<Location> locations) {
 
@@ -30,18 +34,10 @@ public record MerchantCommand(@NotNull String name, @NotNull MerchantType type, 
 
         @Override
         public void validate(MerchantCommand model) {
-            requireStringNotBlank(model.name(), "Name is mandatory");
-
             if (isParentMerchant(model.type())) {
                 locationNotAllowed(model.locations());
             } else {
                 requireDefaultLocation(model.locations());
-            }
-        }
-
-        private static void requireStringNotBlank(String stringObj, String errorMsg) {
-            if (StringUtils.isBlank(stringObj)) {
-                throw new IllegalArgumentException(errorMsg);
             }
         }
 
