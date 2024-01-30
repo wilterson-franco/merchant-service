@@ -3,11 +3,26 @@ package com.wilterson.cms.common;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.wilterson.cms.common.StringGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class StringGeneratorTest {
+
+    @Test
+    @DisplayName("given a StringGenerator instance " +
+            "when a random string is generated " +
+            "then it should work properly")
+    void whenInstantiate_thenShouldSucceed() {
+
+        // given
+        var stringGenerator = new StringGenerator();
+
+        // when
+        String random = stringGenerator.generate(1);
+
+        // then
+        assertThat(random).hasSize(1);
+    }
 
     @Test
     @DisplayName("given a length of 0 " +

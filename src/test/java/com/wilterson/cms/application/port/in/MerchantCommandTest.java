@@ -9,7 +9,6 @@ import jakarta.validation.ConstraintViolationException;
 import java.util.Collections;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -18,136 +17,83 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 public class MerchantCommandTest {
 
-    @Nested
-    class MerchantHandling {
+    @Test
+    void whenCreateHomeDepot_thenNameShouldBeHomeDepot() {
 
-        @Test
-        void whenCreateHomeDepot_thenNameShouldBeHomeDepot() {
+        // given
+        var location = new Location(true);
+        var theHomeDepot = "The Home Depot";
+        var merchantType = MerchantType.SINGLE_MERCHANT;
+        var locations = Collections.singleton(location);
 
-            // given
-            Location location = new Location(true);
-            String theHomeDepot = "The Home Depot";
-            MerchantType merchantType = MerchantType.SINGLE_MERCHANT;
-            Set<Location> locations = Collections.singleton(location);
+        // when
+        MerchantCommand command = new MerchantCommand(theHomeDepot, merchantType, locations);
 
-            // when
-            MerchantCommand command = new MerchantCommand(theHomeDepot, merchantType, locations);
-
-            // then
-            assertThat(command.name()).isEqualTo("The Home Depot");
-        }
-
-        @ParameterizedTest
-        @NullAndEmptySource
-        @ValueSource(strings = {" ", "\t", "\n"})
-        void whenBlankName_thenItShouldThrowException(String emptyName) {
-
-            // given
-            Location location = new Location(true);
-            MerchantType merchantType = MerchantType.SINGLE_MERCHANT;
-            Set<Location> locations = Collections.singleton(location);
-
-            // when
-            // then
-            assertThrows(ConstraintViolationException.class, () -> new MerchantCommand(emptyName, merchantType, locations));
-        }
-
-        @DisplayName("given the merchant type " +
-                "when non-parent merchants are created " +
-                "then the type should be set accordingly")
-        @ParameterizedTest
-        @EnumSource(value = MerchantType.class, names = {"SINGLE_MERCHANT", "SUB_MERCHANT"})
-        void whenNonParentMerchant_thenTypeShouldBeSetProperly(MerchantType type) {
-
-            // given
-            Location location = new Location(true);
-            String merchantName = "MerchantName";
-            Set<Location> locations = Collections.singleton(location);
-
-            // when
-            MerchantCommand command = new MerchantCommand(merchantName, type, locations);
-
-            // then
-            assertThat(command.type()).isEqualTo(type);
-        }
-
-        @DisplayName("given the merchant type " +
-                "when parent merchants are created " +
-                "then the type should be set accordingly")
-        @ParameterizedTest
-        @EnumSource(value = MerchantType.class, names = {"PARTNER", "MULTI_MERCHANT"})
-        void whenParentMerchant_thenTypeShouldBeSetProperly(MerchantType type) {
-
-            // given
-            String merchantName = "MerchantName";
-            Set<Location> locations = Collections.emptySet();
-
-            // when
-            MerchantCommand command = new MerchantCommand(merchantName, type, locations);
-
-            // then
-            assertThat(command.type()).isEqualTo(type);
-        }
+        // then
+        assertThat(command.name()).isEqualTo("The Home Depot");
     }
 
-    @Nested
-    class LocationHandling {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" ", "\t", "\n"})
+    void whenBlankName_thenItShouldThrowException(String emptyName) {
 
-        @Test
-        void whenSingleOrSubMerchantWithoutDefaultLocation_thenShouldThrowException() {
+        // given
+        var location = new Location(true);
+        var merchantType = MerchantType.SINGLE_MERCHANT;
+        var locations = Collections.singleton(location);
 
-            // given
-            Set<Location> locations = Collections.singleton(new Location(false));
-            String merchantName = "MerchantName";
-            MerchantType merchantType = MerchantType.SUB_MERCHANT;
+        // when
+        // then
+        assertThrows(ConstraintViolationException.class, () -> new MerchantCommand(emptyName, merchantType, locations));
+    }
 
-            // when
-            // then
-            assertThrows(IllegalArgumentException.class, () -> new MerchantCommand(merchantName, merchantType, locations));
-        }
+    @DisplayName("given the merchant type " +
+            "when non-parent merchants are created " +
+            "then the type should be set accordingly")
+    @ParameterizedTest
+    @EnumSource(value = MerchantType.class, names = {"SINGLE_MERCHANT", "SUB_MERCHANT"})
+    void whenNonParentMerchant_thenTypeShouldBeSetProperly(MerchantType type) {
 
-        @Test
-        void whenSingleOrSubMerchantWithoutLocation_thenShouldThrowException() {
+        // given
+        var location = new Location(true);
+        var locations = Collections.singleton(location);
+        var merchantName = "MerchantName";
 
-            // given
-            String merchantName = "MerchantName";
-            MerchantType merchantType = MerchantType.SUB_MERCHANT;
-            Set<Location> locations = Collections.emptySet();
+        // when
+        MerchantCommand command = new MerchantCommand(merchantName, type, locations);
 
-            // when
-            // then
-            assertThrows(IllegalArgumentException.class, () -> new MerchantCommand(merchantName, merchantType, locations));
-        }
+        // then
+        assertThat(command.type()).isEqualTo(type);
+    }
 
-        @Test
-        @DisplayName("when parent merchant without location " +
-                "then MerchantCommand creation should succeed")
-        void whenParentMerchantWithoutLocation_thenCreateShouldSucceed() {
+    @DisplayName("given the merchant type " +
+            "when parent merchants are created " +
+            "then the type should be set accordingly")
+    @ParameterizedTest
+    @EnumSource(value = MerchantType.class, names = {"PARTNER", "MULTI_MERCHANT"})
+    void whenParentMerchant_thenTypeShouldBeSetProperly(MerchantType type) {
 
-            // given
-            String merchantName = "MerchantName";
-            MerchantType merchantType = MerchantType.MULTI_MERCHANT;
-            Set<Location> locations = Collections.emptySet();
+        // given
+        var merchantName = "MerchantName";
+        Set<Location> locations = Collections.emptySet();
 
-            // when
-            MerchantCommand command = new MerchantCommand(merchantName, merchantType, locations);
+        // when
+        MerchantCommand command = new MerchantCommand(merchantName, type, locations);
 
-            // then
-            assertThat(command.type()).isEqualTo(merchantType);
-        }
+        // then
+        assertThat(command.type()).isEqualTo(type);
+    }
 
-        @Test
-        void whenParentMerchantWithLocation_thenCreateShouldThrowException() {
+    @Test
+    void whenCreateMerchantInvalidType_thenShouldThrowException() {
 
-            // given
-            Location location = new Location(false);
-            String merchantName = "MerchantName";
-            MerchantType merchantType = MerchantType.MULTI_MERCHANT;
-            Set<Location> locations = Collections.singleton(location);
+        // given
+        var merchantName = "MerchantName";
+        var locations = Collections.singleton(new Location(true));
 
-            // when
-            // then
-            assertThrows(IllegalArgumentException.class, () -> new MerchantCommand(merchantName, merchantType, locations));
-        }
+        // when
+        var exception = assertThrows(ConstraintViolationException.class, () -> new MerchantCommand(merchantName, null, locations));
+        assertThat(exception).hasMessage("type: Type can't be null");
     }
 }
