@@ -5,11 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.wilterson.cms.application.domain.model.Location;
 import com.wilterson.cms.application.domain.model.Merchant;
-import com.wilterson.cms.application.domain.model.Merchant.MerchantBuilder;
 import com.wilterson.cms.application.domain.model.MerchantType;
 import com.wilterson.cms.application.port.in.MerchantCommand;
 import jakarta.validation.ConstraintViolationException;
-import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Disabled;
@@ -23,7 +21,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 class CreateMerchantServiceTest {
 
     @Test
-    void whenCreateMerchant_thenGuidShouldBeUnique() {
+    void whenUniqueGuid_thenCreateMerchantShouldSucceed() {
 
         // given
         var createMerchantService = new CreateMerchantService();

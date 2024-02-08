@@ -2,14 +2,13 @@ package com.wilterson.cms.application.domain.service;
 
 import com.wilterson.cms.application.domain.model.Merchant;
 import com.wilterson.cms.application.domain.model.Merchant.MerchantBuilder;
-import com.wilterson.cms.application.port.in.CreateMerchantUseCase;
 import com.wilterson.cms.application.port.in.MerchantCommand;
+import com.wilterson.cms.application.port.in.SemanticValidatorUseCase;
 
-class CreateMerchantService implements CreateMerchantUseCase {
+abstract class CreateMerchantService {
 
-    @Override
-    public Merchant create(MerchantCommand command) {
-        return new MerchantBuilder(command.name(), command.type(), SemanticValidatorFactory.validator(command))
+    public static Merchant create(MerchantCommand command, SemanticValidatorUseCase<Merchant> semanticValidator) {
+        return new MerchantBuilder(command.name(), command.type(), semanticValidator)
                 .locations(command.locations())
                 .build();
     }
