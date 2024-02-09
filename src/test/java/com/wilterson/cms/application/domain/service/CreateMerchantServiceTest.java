@@ -2,65 +2,81 @@ package com.wilterson.cms.application.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 
 import com.wilterson.cms.application.domain.model.Location;
 import com.wilterson.cms.application.domain.model.Merchant;
 import com.wilterson.cms.application.domain.model.MerchantType;
 import com.wilterson.cms.application.port.in.MerchantCommand;
-import jakarta.validation.ConstraintViolationException;
+import com.wilterson.cms.common.cache.CacheManager;
+import com.wilterson.cms.common.validation.SemanticValidator;
+import com.wilterson.cms.common.validation.SemanticValidatorFactory;
 import java.util.Collections;
 import java.util.List;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class CreateMerchantServiceTest {
+
+    @Mock
+    private CacheManager cacheManager;
+
+    @Mock
+    SemanticValidator<Merchant> validator;
+
+    @InjectMocks
+    private CreateMerchantService createMerchantService;
 
     @Test
     void whenUniqueGuid_thenCreateMerchantShouldSucceed() {
 
         // given
-        var createMerchantService = new CreateMerchantService();
         var walmartCommand = new MerchantCommand("Walmart", MerchantType.MULTI_MERCHANT, Collections.emptySet());
-        var homeDepotCommand = new MerchantCommand("The Home Depot", MerchantType.MULTI_MERCHANT, Collections.emptySet());
 
         // when
-        var walmart = createMerchantService.create(walmartCommand);
-        var homeDepot = createMerchantService.create(homeDepotCommand);
+        var walmart = createMerchantService.create(walmartCommand, validator);
 
         // then
-        assertThat(walmart.getGuid()).isNotEqualTo(homeDepot.getGuid());
+        assertThat(walmart).isNotNull();
     }
 
-    @Disabled("Missing unique name semantic validation logic. I still need to work on the output port so this can be tested.")
     @Test
-    void whenCreateMerchant_thenNameShouldBeUnique() {
+    void whenGuidDuplicated_thenCreateMerchantShouldThrowException() {
 
         // given
-        var createMerchantService = new CreateMerchantService();
-        var walmartCommand1 = new MerchantCommand("Walmart", MerchantType.MULTI_MERCHANT, Collections.emptySet());
-        var walmartCommand2 = new MerchantCommand("Walmart", MerchantType.MULTI_MERCHANT, Collections.emptySet());
+        var command = new MerchantCommand("MerchantNameA", MerchantType.MULTI_MERCHANT, Collections.emptySet());
+        IllegalArgumentException exception = new IllegalArgumentException("Merchant GUID must be unique");
 
         // when
+        doThrow(exception).when(validator).validate(any(Merchant.class));
+
         // then
-        Merchant walmart1 = createMerchantService.create(walmartCommand1);
-        var exception = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(walmartCommand2));
-        assertThat(exception).hasMessage("Merchant name must be unique");
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command, validator));
+        assertThat(e).hasMessage("Merchant GUID must be unique");
     }
 
-    @ParameterizedTest
-    @NullAndEmptySource
-    void whenCreateMerchant_thenNameIsMandatory(String name) {
+    @Test
+    void whenNameDuplicated_thenCreateMerchantShouldThrowException() {
 
         // given
+        var command = new MerchantCommand("MerchantNameA", MerchantType.MULTI_MERCHANT, Collections.emptySet());
+        IllegalArgumentException exception = new IllegalArgumentException("Merchant name must be unique");
+
+        // when
+        doThrow(exception).when(validator).validate(any(Merchant.class));
 
         // then
-        var violation = assertThrows(ConstraintViolationException.class, () -> new MerchantCommand(name, MerchantType.MULTI_MERCHANT, Collections.emptySet()));
-        assertThat(violation).hasMessage("name: {merchant.name.required}");
+        var e = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command, validator));
+        assertThat(e).hasMessage("Merchant name must be unique");
     }
 
     @Nested
@@ -70,12 +86,12 @@ class CreateMerchantServiceTest {
         void whenSingleOrSubMerchantWithoutDefaultLocation_thenShouldThrowException() {
 
             // given
-            var createMerchantService = new CreateMerchantService();
             var command = new MerchantCommand("MerchantName", MerchantType.SUB_MERCHANT, Collections.singleton(new Location(false)));
+            SemanticValidator<Merchant> validator = new SemanticValidatorFactory(cacheManager).validator(command);
 
             // when
             // then
-            var exception = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command));
+            var exception = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command, validator));
             assertThat(exception).hasMessage("Default location is required");
         }
 
@@ -83,12 +99,12 @@ class CreateMerchantServiceTest {
         void whenSingleOrSubMerchantWithoutMultipleDefaultLocation_thenShouldThrowException() {
 
             // given
-            var createMerchantService = new CreateMerchantService();
             var command = new MerchantCommand("MerchantName", MerchantType.SUB_MERCHANT, List.of(new Location(true), new Location(true)));
+            SemanticValidator<Merchant> validator = new SemanticValidatorFactory(cacheManager).validator(command);
 
             // when
             // then
-            var exception = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command));
+            var exception = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command, validator));
             assertThat(exception).hasMessage("Only one location must be set as default");
         }
 
@@ -96,12 +112,12 @@ class CreateMerchantServiceTest {
         void whenSingleOrSubMerchantWithoutAnyLocation_thenShouldThrowException() {
 
             // given
-            var createMerchantService = new CreateMerchantService();
             var command = new MerchantCommand("MerchantName", MerchantType.SUB_MERCHANT, Collections.emptySet());
+            SemanticValidator<Merchant> validator = new SemanticValidatorFactory(cacheManager).validator(command);
 
             // when
             // then
-            var exception = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command));
+            var exception = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command, validator));
             assertThat(exception).hasMessage("Default location is required");
         }
 
@@ -111,11 +127,11 @@ class CreateMerchantServiceTest {
         void whenParentMerchantWithoutAnyLocation_thenCreateShouldSucceed() {
 
             // given
-            var createMerchantService = new CreateMerchantService();
             var command = new MerchantCommand("MerchantName", MerchantType.MULTI_MERCHANT, Collections.emptySet());
+            SemanticValidator<Merchant> validator = new SemanticValidatorFactory(cacheManager).validator(command);
 
             // when
-            var merchant = createMerchantService.create(command);
+            var merchant = createMerchantService.create(command, validator);
 
             // then
             assertThat(merchant.getType()).isEqualTo(command.type());
@@ -126,12 +142,12 @@ class CreateMerchantServiceTest {
         void whenParentMerchantWithLocation_thenCreateShouldThrowException(MerchantType type) {
 
             // given
-            var createMerchantService = new CreateMerchantService();
             var command = new MerchantCommand("MerchantName", type, Collections.singleton(new Location(false)));
+            SemanticValidator<Merchant> validator = new SemanticValidatorFactory(cacheManager).validator(command);
 
             // when
             // then
-            var exception = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command));
+            var exception = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command, validator));
             assertThat(exception).hasMessage("Parent merchant can't have location.");
         }
     }

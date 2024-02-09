@@ -12,11 +12,12 @@ import org.springframework.stereotype.Service;
 public class ApplicationService implements CreateMerchantUseCase {
 
     private final SemanticValidatorFactory semanticValidatorFactory;
+    private final CreateMerchantService createMerchantService;
 
     @Override
     public Merchant create(MerchantCommand command) {
         try {
-            return CreateMerchantService.create(command, semanticValidatorFactory.validator(command));
+            return createMerchantService.create(command, semanticValidatorFactory.validator(command));
         } catch (Exception exception) {
 
             // TODO: catch the specialized exception, convert it into an application exception and rethrow it

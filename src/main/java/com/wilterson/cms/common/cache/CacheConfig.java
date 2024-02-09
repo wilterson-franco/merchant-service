@@ -8,12 +8,10 @@ import org.springframework.context.annotation.Configuration;
 public class CacheConfig {
 
     @Bean
-    public Set<CachedEntity> cache() {
+    public Set<CachedEntity> merchantCache() {
         return Set.of(new CachedEntity("Daniel", "DDDDDD"),
                 new CachedEntity("Gabriel", "GGGGGG"),
                 new CachedEntity("Suellen", "SSSSSS"),
                 new CachedEntity("Wilterson", "WWWWWW"));
     }
-
-
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class Cache {
+public class CacheManager {
 
     private final Set<CachedEntity> cachedEntitySet;
 

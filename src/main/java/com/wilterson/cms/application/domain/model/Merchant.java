@@ -1,7 +1,7 @@
 package com.wilterson.cms.application.domain.model;
 
 import com.wilterson.cms.common.StringGenerator;
-import com.wilterson.cms.application.port.in.SemanticValidatorUseCase;
+import com.wilterson.cms.common.validation.SemanticValidator;
 import com.wilterson.cms.common.validation.SyntacticValidator;
 import com.wilterson.cms.common.validation.Validatable;
 import jakarta.validation.constraints.NotBlank;
@@ -22,7 +22,7 @@ public class Merchant implements Validatable {
     private final Collection<Location> locations;
 
     @NotNull
-    private SemanticValidatorUseCase<Merchant> validator;
+    private SemanticValidator<Merchant> validator;
 
     private Merchant(MerchantBuilder builder) {
         this.name = builder.name;
@@ -42,12 +42,12 @@ public class Merchant implements Validatable {
         // mandatory parameters
         private final String name;
         private final MerchantType type;
-        private final SemanticValidatorUseCase<Merchant> validator;
+        private final SemanticValidator<Merchant> validator;
 
         // optional parameters
         private Collection<Location> locations;
 
-        public MerchantBuilder(String name, MerchantType type, SemanticValidatorUseCase<Merchant> validator) {
+        public MerchantBuilder(String name, MerchantType type, SemanticValidator<Merchant> validator) {
             this.name = name;
             this.type = type;
             this.validator = validator;
