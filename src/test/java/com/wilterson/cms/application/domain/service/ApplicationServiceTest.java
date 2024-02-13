@@ -1,6 +1,6 @@
 package com.wilterson.cms.application.domain.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.wilterson.cms.assertJ.CmsAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -12,13 +12,11 @@ import com.wilterson.cms.application.domain.model.MerchantType;
 import com.wilterson.cms.application.port.in.MerchantCommand;
 import com.wilterson.cms.common.validation.SemanticValidatorFactory;
 import java.util.Collections;
-import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContextException;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationServiceTest {
@@ -58,6 +56,9 @@ class ApplicationServiceTest {
 
         // then
         var applicationException = assertThrows(ApplicationException.class, () -> applicationService.create(command));
-        assertThat(applicationException).hasMessage("Merchant name must be unique");
+        assertThat(applicationException).hasDescription("Merchant name must be unique");
+        assertThat(applicationException).hasSource("Merchant Service");
+        assertThat(applicationException).hasReasonCode("some reason code");
+        assertThat(applicationException).isNotRecoverable();
     }
 }

@@ -9,6 +9,8 @@ import com.wilterson.cms.application.domain.model.Location;
 import com.wilterson.cms.application.domain.model.Merchant;
 import com.wilterson.cms.application.domain.model.MerchantType;
 import com.wilterson.cms.application.port.in.MerchantCommand;
+import com.wilterson.cms.assertJ.MerchantAssert;
+import com.wilterson.cms.assertJ.CmsAssertions;
 import com.wilterson.cms.common.cache.CacheManager;
 import com.wilterson.cms.common.validation.SemanticValidator;
 import com.wilterson.cms.common.validation.SemanticValidatorFactory;
@@ -46,7 +48,7 @@ class CreateMerchantServiceTest {
         var walmart = createMerchantService.create(walmartCommand, validator);
 
         // then
-        assertThat(walmart).isNotNull();
+        CmsAssertions.assertThat(walmart).isNotNull();
     }
 
     @Test
@@ -134,7 +136,7 @@ class CreateMerchantServiceTest {
             var merchant = createMerchantService.create(command, validator);
 
             // then
-            assertThat(merchant.getType()).isEqualTo(command.type());
+            MerchantAssert.assertThat(merchant).typeEqualsTo(command.type());
         }
 
         @ParameterizedTest

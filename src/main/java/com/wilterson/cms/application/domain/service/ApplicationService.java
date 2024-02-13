@@ -24,7 +24,7 @@ public class ApplicationService implements CreateMerchantUseCase {
             throw ApplicationException.builder()
                     .source("Merchant Service")
                     .reasonCode("some reason code")
-                    .message(exception.getMessage())
+                    .description(exception.getMessage())
                     .recoverable(false)
                     .build();
         }

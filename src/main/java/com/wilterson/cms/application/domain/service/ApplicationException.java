@@ -15,6 +15,6 @@ public class ApplicationException extends RuntimeException {
 
     private String reasonCode;
     private String source;
-    private String message;
+    private String description;
     private boolean recoverable;
 }
