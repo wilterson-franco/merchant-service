@@ -18,10 +18,15 @@ public class ApplicationService implements CreateMerchantUseCase {
     public Merchant create(MerchantCommand command) {
         try {
             return createMerchantService.create(command, semanticValidatorFactory.validator(command));
-        } catch (Exception exception) {
+        } catch (IllegalArgumentException exception) {
 
             // TODO: catch the specialized exception, convert it into an application exception and rethrow it
-            throw new RuntimeException("CHANGE THIS");
+            throw ApplicationException.builder()
+                    .source("Merchant Service")
+                    .reasonCode("some reason code")
+                    .message(exception.getMessage())
+                    .recoverable(false)
+                    .build();
         }
     }
 }
