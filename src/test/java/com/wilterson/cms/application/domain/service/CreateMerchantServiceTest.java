@@ -12,6 +12,7 @@ import com.wilterson.cms.application.port.in.MerchantCommand;
 import com.wilterson.cms.assertJ.MerchantAssert;
 import com.wilterson.cms.assertJ.CmsAssertions;
 import com.wilterson.cms.common.cache.CacheManager;
+import com.wilterson.cms.common.validation.LocationValidationException;
 import com.wilterson.cms.common.validation.SemanticValidator;
 import com.wilterson.cms.common.validation.SemanticValidatorFactory;
 import java.util.Collections;
@@ -93,7 +94,7 @@ class CreateMerchantServiceTest {
 
             // when
             // then
-            var exception = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command, validator));
+            var exception = assertThrows(LocationValidationException.class, () -> createMerchantService.create(command, validator));
             assertThat(exception).hasMessage("Default location is required");
         }
 
@@ -106,7 +107,7 @@ class CreateMerchantServiceTest {
 
             // when
             // then
-            var exception = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command, validator));
+            var exception = assertThrows(LocationValidationException.class, () -> createMerchantService.create(command, validator));
             assertThat(exception).hasMessage("Only one location must be set as default");
         }
 
@@ -119,7 +120,7 @@ class CreateMerchantServiceTest {
 
             // when
             // then
-            var exception = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command, validator));
+            var exception = assertThrows(LocationValidationException.class, () -> createMerchantService.create(command, validator));
             assertThat(exception).hasMessage("Default location is required");
         }
 
@@ -149,7 +150,7 @@ class CreateMerchantServiceTest {
 
             // when
             // then
-            var exception = assertThrows(IllegalArgumentException.class, () -> createMerchantService.create(command, validator));
+            var exception = assertThrows(LocationValidationException.class, () -> createMerchantService.create(command, validator));
             assertThat(exception).hasMessage("Parent merchant can't have location.");
         }
     }

@@ -10,7 +10,9 @@ import static org.mockito.Mockito.verify;
 
 import com.wilterson.cms.application.domain.model.MerchantType;
 import com.wilterson.cms.application.port.in.MerchantCommand;
+import com.wilterson.cms.common.validation.SemanticValidationException;
 import com.wilterson.cms.common.validation.SemanticValidatorFactory;
+import com.wilterson.cms.common.validation.UniqueNameException;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,10 +51,10 @@ class ApplicationServiceTest {
 
         // given
         var command = new MerchantCommand("MerchantName", MerchantType.MULTI_MERCHANT, Collections.emptySet());
-        var illegalArgumentException = new IllegalArgumentException("Merchant name must be unique");
+        var validationException = new UniqueNameException("Merchant name must be unique");
 
         // when
-        doThrow(illegalArgumentException).when(semanticValidatorFactory).validator(command);
+        doThrow(validationException).when(semanticValidatorFactory).validator(command);
 
         // then
         var applicationException = assertThrows(ApplicationException.class, () -> applicationService.create(command));

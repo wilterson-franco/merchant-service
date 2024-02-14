@@ -11,6 +11,8 @@ import com.wilterson.cms.common.cache.CacheManager;
 import com.wilterson.cms.common.cache.CachedEntity;
 import com.wilterson.cms.common.validation.SemanticValidator;
 import com.wilterson.cms.common.validation.SemanticValidatorFactory;
+import com.wilterson.cms.common.validation.UniqueGuidException;
+import com.wilterson.cms.common.validation.UniqueNameException;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -44,7 +46,7 @@ class SemanticValidatorFactoryTest {
         doReturn(cachedEntity).when(cacheManager).getEntityByGuid("AAAAAA");
 
         // then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> validator.validate(merchant));
+        var exception = assertThrows(UniqueGuidException.class, () -> validator.validate(merchant));
         assertThat(exception).hasMessage("Merchant GUID must be unique");
     }
 
@@ -61,7 +63,7 @@ class SemanticValidatorFactoryTest {
         doReturn(cachedEntity).when(cacheManager).getEntityByName("MerchantName");
 
         // then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> validator.validate(merchant));
+        var exception = assertThrows(UniqueNameException.class, () -> validator.validate(merchant));
         assertThat(exception).hasMessage("Merchant name must be unique");
     }
 }

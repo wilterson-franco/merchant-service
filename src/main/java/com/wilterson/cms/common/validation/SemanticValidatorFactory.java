@@ -57,13 +57,13 @@ public final class SemanticValidatorFactory {
 
     private SemanticValidator<Merchant> uniqueNameValidator() {
         return (merchant) -> cacheManager.getEntityByName(merchant.getName()).ifPresent((entity) -> {
-            throw new IllegalArgumentException("Merchant name must be unique");
+            throw new UniqueNameException("Merchant name must be unique");
         });
     }
 
     private SemanticValidator<Merchant> uniqueGuidValidator() {
         return (merchant) -> cacheManager.getEntityByGuid(merchant.getGuid()).ifPresent((entity) -> {
-            throw new IllegalArgumentException("Merchant GUID must be unique");
+            throw new UniqueGuidException("Merchant GUID must be unique");
         });
     }
 
@@ -71,9 +71,9 @@ public final class SemanticValidatorFactory {
         return (merchant) -> {
             var count = merchant.getLocations().stream().filter(Location::isDefault).count();
             if (count < 1) {
-                throw new IllegalArgumentException("Default location is required");
+                throw new LocationValidationException("Default location is required");
             } else if (count > 1) {
-                throw new IllegalArgumentException("Only one location must be set as default");
+                throw new LocationValidationException("Only one location must be set as default");
             }
         };
     }
@@ -81,7 +81,7 @@ public final class SemanticValidatorFactory {
     private static SemanticValidator<Merchant> locationNotAllowedValidator() {
         return (merchant) -> {
             if (!CollectionUtils.isEmpty(merchant.getLocations())) {
-                throw new IllegalArgumentException("Parent merchant can't have location.");
+                throw new LocationValidationException("Parent merchant can't have location.");
             }
         };
     }
