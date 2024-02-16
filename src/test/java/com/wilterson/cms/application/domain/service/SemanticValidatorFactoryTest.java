@@ -1,69 +1,133 @@
 package com.wilterson.cms.application.domain.service;
 
+import static com.wilterson.cms.assertJ.IssueAssert.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doReturn;
 
+import com.wilterson.cms.application.domain.model.Location.LocationBuilder;
 import com.wilterson.cms.application.domain.model.Merchant;
+import com.wilterson.cms.application.domain.model.Merchant.MerchantBuilder;
 import com.wilterson.cms.application.domain.model.MerchantType;
-import com.wilterson.cms.application.port.in.MerchantCommand;
 import com.wilterson.cms.common.cache.CacheManager;
 import com.wilterson.cms.common.cache.CachedEntity;
-import com.wilterson.cms.common.validation.SemanticValidator;
+import com.wilterson.cms.common.validation.Issue;
 import com.wilterson.cms.common.validation.SemanticValidatorFactory;
-import com.wilterson.cms.common.validation.UniqueGuidException;
-import com.wilterson.cms.common.validation.UniqueNameException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
 class SemanticValidatorFactoryTest {
 
-    @Mock
     private Merchant merchant;
+    private SemanticValidatorFactory semanticValidatorFactory;
 
-    @Mock
-    private CacheManager cacheManager;
+    @BeforeEach
+    void setup() {
+        merchant = new MerchantBuilder("NAME", "GUID", MerchantType.SUB_MERCHANT)
+                .locations(Collections.singleton(new LocationBuilder("CAN").defaultLocation(true).build()))
+                .build();
 
-    @InjectMocks
-    SemanticValidatorFactory semanticValidatorFactory;
-
-    @Test
-    void whenDuplicatedGuid_thenCreateMerchantShouldFail() {
-
-        // given
-        MerchantCommand command = new MerchantCommand("MerchantName", MerchantType.MULTI_MERCHANT, Collections.emptySet());
-        SemanticValidator<Merchant> validator = semanticValidatorFactory.validator(command);
-        Optional<CachedEntity> cachedEntity = Optional.of(new CachedEntity("MerchantName", "AAAAAA"));
-
-        // when
-        doReturn("AAAAAA").when(merchant).getGuid();
-        doReturn(cachedEntity).when(cacheManager).getEntityByGuid("AAAAAA");
-
-        // then
-        var exception = assertThrows(UniqueGuidException.class, () -> validator.validate(merchant));
-        assertThat(exception).hasMessage("Merchant GUID must be unique");
+        semanticValidatorFactory = new SemanticValidatorFactory(new CacheManager(Set.of(new CachedEntity("NAME", "GUID"))));
     }
 
     @Test
-    void whenDuplicateName_thenCreateMerchantShouldFail() {
+    void whenDuplicatedGuid_thenSemanticValidationShouldCatchIssue() {
 
         // given
-        MerchantCommand command = new MerchantCommand("MerchantName", MerchantType.MULTI_MERCHANT, Collections.emptySet());
-        SemanticValidator<Merchant> validator = semanticValidatorFactory.validator(command);
-        Optional<CachedEntity> cachedEntity = Optional.of(new CachedEntity("MerchantName", "AAAAAA"));
+        Set<Issue> issues = new HashSet<>();
 
         // when
-        doReturn("MerchantName").when(merchant).getName();
-        doReturn(cachedEntity).when(cacheManager).getEntityByName("MerchantName");
+        var uniqueGuid = semanticValidatorFactory.getUniqueGuid();
+        uniqueGuid.validate(merchant, issues);
 
         // then
-        var exception = assertThrows(UniqueNameException.class, () -> validator.validate(merchant));
-        assertThat(exception).hasMessage("Merchant name must be unique");
+        assertThat(issues).hasSize(1);
+        assertThat(new ArrayList<>(issues).getFirst()).hasDescription("Merchant GUID must be unique.");
+    }
+
+    @Test
+    void whenDuplicateName_thenSemanticValidationShouldCatchIssue() {
+
+        // given
+        Set<Issue> issues = new HashSet<>();
+
+        // when
+        var uniqueName = semanticValidatorFactory.getUniqueName();
+        uniqueName.validate(merchant, issues);
+
+        // then
+        assertThat(issues).hasSize(1);
+        assertThat(new ArrayList<>(issues).getFirst()).hasDescription("Merchant name must be unique.");
+    }
+
+    @Test
+    void whenNonLocation_thenSemanticValidationShouldCatchIssue() {
+
+        // given
+        Set<Issue> issues = new HashSet<>();
+        var missingLocationsMerchant = new MerchantBuilder("NAME", "GUID", MerchantType.SUB_MERCHANT).build();
+
+        // when
+        var defaultLocation = semanticValidatorFactory.getDefaultLocation();
+        defaultLocation.validate(missingLocationsMerchant, issues);
+
+        // then
+        assertThat(issues).hasSize(1);
+        assertThat(new ArrayList<>(issues).getFirst()).hasDescription("Default location is required.");
+    }
+
+    @Test
+    void whenNonDefaultLocation_thenSemanticValidationShouldCatchIssue() {
+
+        // given
+        Set<Issue> issues = new HashSet<>();
+        var missingDefaultLocationMerchant = new MerchantBuilder("NAME", "GUID", MerchantType.SUB_MERCHANT)
+                .locations(Collections.singleton(new LocationBuilder("CAN").defaultLocation(false).build()))
+                .build();
+
+        // when
+        var defaultLocation = semanticValidatorFactory.getDefaultLocation();
+        defaultLocation.validate(missingDefaultLocationMerchant, issues);
+
+        // then
+        assertThat(issues).hasSize(1);
+        assertThat(new ArrayList<>(issues).getFirst()).hasDescription("Default location is required.");
+    }
+
+    @Test
+    void whenMultipleDefaultLocation_thenSemanticValidationShouldCatchIssue() {
+
+        // given
+        Set<Issue> issues = new HashSet<>();
+        var twoDefaultLocations = Set.of(new LocationBuilder("CAN").defaultLocation(true).build(), new LocationBuilder("USA").defaultLocation(true).build());
+        var twoDefaultLocationsMerchant = new MerchantBuilder("NAME", "GUID", MerchantType.SUB_MERCHANT)
+                .locations(twoDefaultLocations)
+                .build();
+
+        // when
+        var defaultLocation = semanticValidatorFactory.getDefaultLocation();
+        defaultLocation.validate(twoDefaultLocationsMerchant, issues);
+
+        // then
+        assertThat(issues).hasSize(1);
+        assertThat(new ArrayList<>(issues).getFirst()).hasDescription("Only one location must be set as default.");
+    }
+
+    @Test
+    void whenLocationNotAllowed_thenSemanticValidationShouldCatchIssue() {
+
+        // given
+        Set<Issue> issues = new HashSet<>();
+
+        // when
+        var locationNotAllowed = semanticValidatorFactory.getLocationNotAllowed();
+        locationNotAllowed.validate(merchant, issues);
+
+        // then
+        assertThat(issues).hasSize(1);
+        assertThat(new ArrayList<>(issues).getFirst()).hasDescription("Parent merchant can't have location.");
     }
 }

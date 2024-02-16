@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.wilterson.cms.application.domain.model.Location;
+import com.wilterson.cms.application.domain.model.Location.LocationBuilder;
 import com.wilterson.cms.application.domain.model.MerchantType;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Collections;
@@ -21,7 +22,7 @@ public class MerchantCommandTest {
     void whenCreateHomeDepot_thenNameShouldBeHomeDepot() {
 
         // given
-        var location = new Location(true);
+        var location = new LocationBuilder("CAN").defaultLocation(true).build();
         var theHomeDepot = "The Home Depot";
         var merchantType = MerchantType.SINGLE_MERCHANT;
         var locations = Collections.singleton(location);
@@ -39,7 +40,7 @@ public class MerchantCommandTest {
     void whenBlankName_thenItShouldThrowException(String emptyName) {
 
         // given
-        var location = new Location(true);
+        var location = new LocationBuilder("CAN").defaultLocation(true).build();
         var merchantType = MerchantType.SINGLE_MERCHANT;
         var locations = Collections.singleton(location);
 
@@ -56,7 +57,7 @@ public class MerchantCommandTest {
     void whenNonParentMerchant_thenTypeShouldBeSetProperly(MerchantType type) {
 
         // given
-        var location = new Location(true);
+        var location = new LocationBuilder("CAN").defaultLocation(true).build();
         var locations = Collections.singleton(location);
         var merchantName = "MerchantName";
 
@@ -90,7 +91,7 @@ public class MerchantCommandTest {
 
         // given
         var merchantName = "MerchantName";
-        var locations = Collections.singleton(new Location(true));
+        var locations = Collections.singleton(new LocationBuilder("CAN").defaultLocation(true).build());
 
         // when
         var exception = assertThrows(ConstraintViolationException.class, () -> new MerchantCommand(merchantName, null, locations));

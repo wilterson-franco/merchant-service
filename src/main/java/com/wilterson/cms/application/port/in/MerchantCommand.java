@@ -6,14 +6,14 @@ import com.wilterson.cms.common.validation.SyntacticValidator;
 import com.wilterson.cms.common.validation.Validatable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.util.Collection;
+import java.util.Set;
 
 public record MerchantCommand(
         @NotBlank(message = "{merchant.name.required}") String name,
         @NotNull(message = "Type can't be null") MerchantType type,
-        Collection<Location> locations) implements Validatable {
+        Set<Location> locations) implements Validatable {
 
-    public MerchantCommand(String name, MerchantType type, Collection<Location> locations) {
+    public MerchantCommand(String name, MerchantType type, Set<Location> locations) {
 
         this.name = name;
         this.type = type;

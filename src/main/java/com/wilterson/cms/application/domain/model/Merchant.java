@@ -1,59 +1,50 @@
 package com.wilterson.cms.application.domain.model;
 
-import com.wilterson.cms.common.StringGenerator;
-import com.wilterson.cms.common.validation.SemanticValidator;
 import com.wilterson.cms.common.validation.SyntacticValidator;
 import com.wilterson.cms.common.validation.Validatable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.util.Collection;
+import java.util.Set;
 import lombok.Data;
 
 @Data
 public class Merchant implements Validatable {
 
-    private static final int GUID_LENGTH = 16;
-
-    private final String guid = StringGenerator.generate(GUID_LENGTH);
+    @NotBlank
+    private final String guid;
     @NotBlank
     private final String name;
     @NotNull
     private final MerchantType type;
-    private final Collection<Location> locations;
-
-    @NotNull
-    private SemanticValidator<Merchant> validator;
+    private final Set<Location> locations;
 
     private Merchant(MerchantBuilder builder) {
         this.name = builder.name;
         this.type = builder.type;
+        this.guid = builder.guid;
         this.locations = builder.locations;
-        this.validator = builder.validator;
 
         // syntactic validations (input validations)
         SyntacticValidator.validate(this);
-
-        // semantic validations (business rules)
-        validator.validate(this);
     }
 
     public static class MerchantBuilder {
 
         // mandatory parameters
         private final String name;
+        private final String guid;
         private final MerchantType type;
-        private final SemanticValidator<Merchant> validator;
 
         // optional parameters
-        private Collection<Location> locations;
+        private Set<Location> locations;
 
-        public MerchantBuilder(String name, MerchantType type, SemanticValidator<Merchant> validator) {
+        public MerchantBuilder(String name, String guid, MerchantType type) {
             this.name = name;
+            this.guid = guid;
             this.type = type;
-            this.validator = validator;
         }
 
-        public MerchantBuilder locations(Collection<Location> locations) {
+        public MerchantBuilder locations(Set<Location> locations) {
             this.locations = locations;
             return this;
         }
