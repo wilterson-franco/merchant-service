@@ -6,8 +6,8 @@ public enum IssueFactory {
 
     MERCHANT_NAME(INVALID_DATA.getValue() + "merchant.name"),
     MERCHANT_GUID(INVALID_DATA.getValue() + "merchant.guid"),
-    MERCHANT_LOCATIONS(INVALID_DATA.getValue() + "merchant.locations[]"),
-    MERCHANT_LOCATIONS_DEFAULT(INVALID_DATA.getValue() + "merchant.locations[].isDefault");
+    MERCHANT_LOCATIONS(INVALID_DATA.getValue() + "merchant.locationCommands[]"),
+    MERCHANT_LOCATIONS_DEFAULT(INVALID_DATA.getValue() + "merchant.locationCommands[].isDefault");
 
     private String reasonCode;
     public static final String MERCHANT_SERVICE = "Merchant Service";

@@ -1,9 +1,10 @@
-package com.wilterson.cms.application.port.in;
+package com.wilterson.cms.application.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.wilterson.cms.application.domain.model.MerchantType;
+import com.wilterson.cms.application.domain.model.Location.LocationBuilder;
+import com.wilterson.cms.application.domain.model.Merchant.MerchantBuilder;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Collections;
 import java.util.Set;
@@ -14,23 +15,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class MerchantCommandTest {
-
-    @Test
-    void whenCreateHomeDepot_thenNameShouldBeHomeDepot() {
-
-        // given
-        var locationCommand = new LocationCommand("CAN", true);
-        var theHomeDepot = "The Home Depot";
-        var merchantType = MerchantType.SINGLE_MERCHANT;
-        var locationCommands = Collections.singleton(locationCommand);
-
-        // when
-        var merchantCommand = new MerchantCommand(theHomeDepot, merchantType, locationCommands);
-
-        // then
-        assertThat(merchantCommand.name()).isEqualTo("The Home Depot");
-    }
+class MerchantTest {
 
     @ParameterizedTest
     @NullAndEmptySource
@@ -38,13 +23,13 @@ public class MerchantCommandTest {
     void whenBlankName_thenItShouldThrowException(String emptyName) {
 
         // given
-        var locationCommand = new LocationCommand("CAN", true);
+        var location = new LocationBuilder("CAN").defaultLocation(true).build();
         var merchantType = MerchantType.SINGLE_MERCHANT;
-        var locationCommands = Collections.singleton(locationCommand);
+        var locations = Collections.singleton(location);
 
         // when
         // then
-        assertThrows(ConstraintViolationException.class, () -> new MerchantCommand(emptyName, merchantType, locationCommands));
+        assertThrows(ConstraintViolationException.class, () -> new MerchantBuilder(emptyName, "GUID", merchantType).locations(locations).build());
     }
 
     @DisplayName("given the merchant type " +
@@ -55,15 +40,17 @@ public class MerchantCommandTest {
     void whenNonParentMerchant_thenTypeShouldBeSetProperly(MerchantType type) {
 
         // given
-        var locationCommand = new LocationCommand("CAN", true);
-        var locationCommands = Collections.singleton(locationCommand);
+        var location = new LocationBuilder("CAN").defaultLocation(true).build();
+        var locations = Collections.singleton(location);
         var merchantName = "MerchantName";
 
         // when
-        var merchantCommand = new MerchantCommand(merchantName, type, locationCommands);
+        var merchant = new MerchantBuilder(merchantName, "GUID", type)
+                .locations(locations)
+                .build();
 
         // then
-        assertThat(merchantCommand.type()).isEqualTo(type);
+        assertThat(merchant.getType()).isEqualTo(type);
     }
 
     @DisplayName("given the merchant type " +
@@ -75,13 +62,13 @@ public class MerchantCommandTest {
 
         // given
         var merchantName = "MerchantName";
-        Set<LocationCommand> locationCommands = Collections.emptySet();
+        Set<Location> locations = Collections.emptySet();
 
         // when
-        var merchantCommand = new MerchantCommand(merchantName, type, locationCommands);
+        var merchant = new MerchantBuilder(merchantName, "GUID", type).build();
 
         // then
-        assertThat(merchantCommand.type()).isEqualTo(type);
+        assertThat(merchant.getType()).isEqualTo(type);
     }
 
     @Test
@@ -89,10 +76,13 @@ public class MerchantCommandTest {
 
         // given
         var merchantName = "MerchantName";
-        var locationCommands = Collections.singleton(new LocationCommand("CAN", true));
+        var locations = Collections.singleton(new LocationBuilder("CAN").defaultLocation(true).build());
 
         // when
-        var exception = assertThrows(ConstraintViolationException.class, () -> new MerchantCommand(merchantName, null, locationCommands));
-        assertThat(exception).hasMessage("type: Type can't be null");
+        var exception = assertThrows(ConstraintViolationException.class, () -> new MerchantBuilder(merchantName, "GUID", null)
+                .locations(locations)
+                .build());
+
+        assertThat(exception).hasMessage("type: must not be null");
     }
 }

@@ -12,7 +12,6 @@ import com.wilterson.cms.common.cache.CachedEntity;
 import com.wilterson.cms.common.validation.Issue;
 import com.wilterson.cms.common.validation.SemanticValidatorFactory;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;

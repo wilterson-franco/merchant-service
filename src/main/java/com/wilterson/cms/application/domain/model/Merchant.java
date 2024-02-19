@@ -1,5 +1,6 @@
 package com.wilterson.cms.application.domain.model;
 
+import com.wilterson.cms.application.port.in.LocationCommand;
 import com.wilterson.cms.common.validation.SyntacticValidator;
 import com.wilterson.cms.common.validation.Validatable;
 import jakarta.validation.constraints.NotBlank;

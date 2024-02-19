@@ -1,6 +1,5 @@
 package com.wilterson.cms.application.port.in;
 
-import com.wilterson.cms.application.domain.model.Location;
 import com.wilterson.cms.application.domain.model.MerchantType;
 import com.wilterson.cms.common.validation.SyntacticValidator;
 import com.wilterson.cms.common.validation.Validatable;
@@ -11,13 +10,13 @@ import java.util.Set;
 public record MerchantCommand(
         @NotBlank(message = "{merchant.name.required}") String name,
         @NotNull(message = "Type can't be null") MerchantType type,
-        Set<Location> locations) implements Validatable {
+        Set<LocationCommand> locationCommands) implements Validatable {
 
-    public MerchantCommand(String name, MerchantType type, Set<Location> locations) {
+    public MerchantCommand(String name, MerchantType type, Set<LocationCommand> locationCommands) {
 
         this.name = name;
         this.type = type;
-        this.locations = locations;
+        this.locationCommands = locationCommands;
 
         // syntactic validation (input fields)
         SyntacticValidator.validate(this);
