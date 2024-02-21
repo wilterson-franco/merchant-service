@@ -12,7 +12,8 @@ https://start.spring.io/#!type=maven-project&language=java&platformVersion=3.2.2
 2. The semantic validation logic should be an extended use case. Check how it can be implemented as such so that it can be extended without violating the SOLID principles (mainly the OCP)
 3. Can the semantic validation objects be executed in parallel, on their own thread?
 4. Check the possibility of using the commander pattern in the `ApplicationService` class.
-5. Is it possible to have cross-dependent validations among multiple class fields on JSR-381 (the @Validated annotation)? For exemple, in the `Location` domain entity class one of the validations must combine the `countryCode`, `region`, `city`, and `cardAcceptorLocation` fields. Refer to [this article](https://levelup.gitconnected.com/use-validated-to-handle-api-complex-parameter-validation-d40d4ed62187) to address this ask. 
+5. Is it possible to have cross-dependent validations among multiple class fields on JSR-381 (the @Validated annotation)? For exemple, in the `Location` domain entity class one of the validations must combine the `countryCode`, `region`, `city`, and `cardAcceptorLocation` fields. Refer to [this article](https://levelup.gitconnected.com/use-validated-to-handle-api-complex-parameter-validation-d40d4ed62187) to address this ask.
+6. The `MerchantCommand.type` JSR-381 validation needs to be improved. Just saying it can't be null is not enough. It needs to be changed to ensure only strings that match the `MerchantType` enum are accepted. Refer to [this article](https://www.baeldung.com/javax-validations-enums#any-of-validation) to address this ask.
 
 ## TODO: Requirements
 1. Where and how will the merchant life-cycle be implemented? Maybe there should be an extended use case that gets called by the `CreateMerchantService` and `UpdatedMerchantService` (future) to decide 
