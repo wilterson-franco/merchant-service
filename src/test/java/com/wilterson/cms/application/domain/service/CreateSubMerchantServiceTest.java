@@ -1,5 +1,6 @@
 package com.wilterson.cms.application.domain.service;
 
+import static com.wilterson.cms.application.port.in.MerchantTypeCommand.MULTI_MERCHANT;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -8,7 +9,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.wilterson.cms.application.domain.model.MerchantType;
 import com.wilterson.cms.application.port.in.MerchantCommand;
 import com.wilterson.cms.common.cache.CacheManager;
 import com.wilterson.cms.common.cache.CachedEntity;
@@ -36,7 +36,7 @@ class CreateSubMerchantServiceTest {
         semanticValidatorFactory = spy(new SemanticValidatorFactory(cacheManager));
         createSubMerchantService = new CreateSubMerchantService();
         createSubMerchantService.setSemanticValidatorFactory(semanticValidatorFactory);
-        createSubMerchantService.setMerchantMapper(new MerchantMapper(new LocationMapper()));
+        createSubMerchantService.setMerchantMapper(new MerchantMapper(new LocationMapper(), new MerchantTypeMapper()));
     }
 
     @Test
@@ -46,7 +46,7 @@ class CreateSubMerchantServiceTest {
     void whenCreatingSubMerchant_thenSubMerchantValidationMethodShouldBeCalled() {
 
         // given
-        var command = new MerchantCommand("MerchantNameA", MerchantType.MULTI_MERCHANT, Collections.emptySet());
+        var command = new MerchantCommand("MerchantNameA", MULTI_MERCHANT, Collections.emptySet());
 
         // when
         doReturn(mock(SemanticValidator.class)).when(semanticValidatorFactory).subMerchantSemanticValidator();
@@ -63,7 +63,7 @@ class CreateSubMerchantServiceTest {
     void whenCreatingSubMerchant_thenSemanticValidationShouldRun() {
 
         // given
-        var command = new MerchantCommand("MerchantNameA", MerchantType.MULTI_MERCHANT, Collections.emptySet());
+        var command = new MerchantCommand("MerchantNameA", MULTI_MERCHANT, Collections.emptySet());
         var cachedEntity = new CachedEntity("MerchantNameA", "SOME-GUID");
 
         // when

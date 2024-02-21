@@ -3,7 +3,6 @@ package com.wilterson.cms.application.port.in;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.wilterson.cms.application.domain.model.MerchantType;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Collections;
 import java.util.Set;
@@ -22,7 +21,7 @@ public class MerchantCommandTest {
         // given
         var locationCommand = new LocationCommand("CAN", true);
         var theHomeDepot = "The Home Depot";
-        var merchantType = MerchantType.SINGLE_MERCHANT;
+        var merchantType = MerchantTypeCommand.SINGLE_MERCHANT;
         var locationCommands = Collections.singleton(locationCommand);
 
         // when
@@ -39,7 +38,7 @@ public class MerchantCommandTest {
 
         // given
         var locationCommand = new LocationCommand("CAN", true);
-        var merchantType = MerchantType.SINGLE_MERCHANT;
+        var merchantType = MerchantTypeCommand.SINGLE_MERCHANT;
         var locationCommands = Collections.singleton(locationCommand);
 
         // when
@@ -51,8 +50,8 @@ public class MerchantCommandTest {
             "when non-parent merchants are created " +
             "then the type should be set accordingly")
     @ParameterizedTest
-    @EnumSource(value = MerchantType.class, names = {"SINGLE_MERCHANT", "SUB_MERCHANT"})
-    void whenNonParentMerchant_thenTypeShouldBeSetProperly(MerchantType type) {
+    @EnumSource(value = MerchantTypeCommand.class, names = {"SINGLE_MERCHANT", "SUB_MERCHANT"})
+    void whenNonParentMerchant_thenTypeShouldBeSetProperly(MerchantTypeCommand type) {
 
         // given
         var locationCommand = new LocationCommand("CAN", true);
@@ -70,8 +69,8 @@ public class MerchantCommandTest {
             "when parent merchants are created " +
             "then the type should be set accordingly")
     @ParameterizedTest
-    @EnumSource(value = MerchantType.class, names = {"PARTNER", "MULTI_MERCHANT"})
-    void whenParentMerchant_thenTypeShouldBeSetProperly(MerchantType type) {
+    @EnumSource(value = MerchantTypeCommand.class, names = {"PARTNER", "MULTI_MERCHANT"})
+    void whenParentMerchant_thenTypeShouldBeSetProperly(MerchantTypeCommand type) {
 
         // given
         var merchantName = "MerchantName";

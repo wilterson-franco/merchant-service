@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 class LocationMapper {
 
-    public Location toDomainEntity(LocationCommand command) {
+    Location toDomainEntity(LocationCommand command) {
         return new LocationBuilder(command.countryCode())
                 .defaultLocation(command.isDefault())
                 .build();
