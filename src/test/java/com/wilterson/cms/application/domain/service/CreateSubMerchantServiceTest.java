@@ -34,7 +34,9 @@ class CreateSubMerchantServiceTest {
     void setup() {
         cacheManager = mock(CacheManager.class);
         semanticValidatorFactory = spy(new SemanticValidatorFactory(cacheManager));
-        createSubMerchantService = new CreateSubMerchantService(semanticValidatorFactory);
+        createSubMerchantService = new CreateSubMerchantService();
+        createSubMerchantService.setSemanticValidatorFactory(semanticValidatorFactory);
+        createSubMerchantService.setMerchantMapper(new MerchantMapper(new LocationMapper()));
     }
 
     @Test

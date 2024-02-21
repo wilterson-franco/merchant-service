@@ -12,7 +12,10 @@ public record MerchantCommand(
         @NotNull(message = "Type can't be null") MerchantType type,
         Set<LocationCommand> locationCommands) implements Validatable {
 
-    public MerchantCommand(String name, MerchantType type, Set<LocationCommand> locationCommands) {
+    public MerchantCommand(
+            String name,
+            MerchantType type,
+            Set<LocationCommand> locationCommands) {
 
         this.name = name;
         this.type = type;

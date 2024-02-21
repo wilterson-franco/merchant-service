@@ -13,28 +13,30 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 @Service
-@RequiredArgsConstructor
-public class CreateSubMerchantService {
+class CreateSubMerchantService {
 
     private static final int GUID_LENGTH = 16;
-    private final SemanticValidatorFactory semanticValidatorFactory;
+    private SemanticValidatorFactory semanticValidatorFactory;
+    private MerchantMapper merchantMapper;
 
-    public Merchant create(MerchantCommand merchantCommand) {
+    @Autowired
+    void setSemanticValidatorFactory(SemanticValidatorFactory semanticValidatorFactory) {
+        this.semanticValidatorFactory = semanticValidatorFactory;
+    }
 
-        var guid = StringGenerator.generate(GUID_LENGTH);
+    @Autowired
+    void setMerchantMapper(MerchantMapper merchantMapper) {
+        this.merchantMapper = merchantMapper;
+    }
 
-        Set<Location> locations = merchantCommand.locationCommands()
-                .stream()
-                .map(c -> new LocationBuilder(c.countryCode()).defaultLocation(c.isDefault()).build())
-                .collect(Collectors.toSet());
+    Merchant create(MerchantCommand merchantCommand) {
 
-        var merchant = new MerchantBuilder(merchantCommand.name(), guid, merchantCommand.type())
-                .locations(locations)
-                .build();
+        var merchant = merchantMapper.toDomainEntity(merchantCommand, StringGenerator.generate(GUID_LENGTH));
 
         Set<Issue> issues = new HashSet<>();
         semanticValidatorFactory.subMerchantSemanticValidator().validate(merchant, issues);
