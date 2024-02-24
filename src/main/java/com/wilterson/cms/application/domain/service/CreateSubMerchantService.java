@@ -1,18 +1,13 @@
 package com.wilterson.cms.application.domain.service;
 
-import com.wilterson.cms.application.domain.model.Location;
-import com.wilterson.cms.application.domain.model.Location.LocationBuilder;
 import com.wilterson.cms.application.domain.model.Merchant;
-import com.wilterson.cms.application.domain.model.Merchant.MerchantBuilder;
 import com.wilterson.cms.application.port.in.MerchantCommand;
 import com.wilterson.cms.common.StringGenerator;
 import com.wilterson.cms.common.validation.Issue;
-import com.wilterson.cms.common.validation.SemanticException;
-import com.wilterson.cms.common.validation.SemanticValidatorFactory;
+import com.wilterson.cms.common.validation.semantic.SemanticException;
+import com.wilterson.cms.common.validation.semantic.SemanticValidatorFactory;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;

@@ -1,4 +1,4 @@
-package com.wilterson.cms.common.validation;
+package com.wilterson.cms.common.validation.syntatic;
 
 import static jakarta.validation.Validation.buildDefaultValidatorFactory;
 

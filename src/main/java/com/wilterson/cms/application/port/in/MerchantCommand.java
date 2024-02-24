@@ -1,7 +1,7 @@
 package com.wilterson.cms.application.port.in;
 
-import com.wilterson.cms.common.validation.SyntacticValidator;
-import com.wilterson.cms.common.validation.Validatable;
+import com.wilterson.cms.common.validation.semantic.Validatable;
+import com.wilterson.cms.common.validation.syntatic.SyntacticValidator;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Set;

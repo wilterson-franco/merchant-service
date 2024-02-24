@@ -3,7 +3,7 @@ package com.wilterson.cms.assertJ;
 import com.wilterson.cms.application.domain.model.Location;
 import com.wilterson.cms.application.domain.model.Merchant;
 import com.wilterson.cms.common.validation.Issue;
-import com.wilterson.cms.common.validation.SemanticException;
+import com.wilterson.cms.common.validation.semantic.SemanticException;
 
 public abstract class CmsAssertions {
 

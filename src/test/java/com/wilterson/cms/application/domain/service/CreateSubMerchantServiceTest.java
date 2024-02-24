@@ -12,9 +12,13 @@ import static org.mockito.Mockito.verify;
 import com.wilterson.cms.application.port.in.MerchantCommand;
 import com.wilterson.cms.common.cache.CacheManager;
 import com.wilterson.cms.common.cache.CachedEntity;
-import com.wilterson.cms.common.validation.SemanticException;
-import com.wilterson.cms.common.validation.SemanticValidator;
-import com.wilterson.cms.common.validation.SemanticValidatorFactory;
+import com.wilterson.cms.common.validation.semantic.DefaultLocationValidation;
+import com.wilterson.cms.common.validation.semantic.LocationNotAllowedValidation;
+import com.wilterson.cms.common.validation.semantic.SemanticException;
+import com.wilterson.cms.common.validation.semantic.SemanticValidator;
+import com.wilterson.cms.common.validation.semantic.SemanticValidatorFactory;
+import com.wilterson.cms.common.validation.semantic.UniqueGuidValidation;
+import com.wilterson.cms.common.validation.semantic.UniqueNameValidation;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,10 +37,8 @@ class CreateSubMerchantServiceTest {
     @BeforeEach
     void setup() {
         cacheManager = mock(CacheManager.class);
-        semanticValidatorFactory = spy(new SemanticValidatorFactory(cacheManager));
-        createSubMerchantService = new CreateSubMerchantService();
-        createSubMerchantService.setSemanticValidatorFactory(semanticValidatorFactory);
-        createSubMerchantService.setMerchantMapper(new MerchantMapper(new LocationMapper(), new MerchantTypeMapper()));
+        buildSemanticValidatorFactory(cacheManager);
+        buildCreateSubMerchantService(semanticValidatorFactory);
     }
 
     @Test
@@ -71,5 +73,19 @@ class CreateSubMerchantServiceTest {
 
         // then
         assertThrows(SemanticException.class, () -> createSubMerchantService.create(command));
+    }
+
+    private void buildSemanticValidatorFactory(CacheManager cacheManager) {
+        semanticValidatorFactory = spy(new SemanticValidatorFactory());
+        semanticValidatorFactory.setUniqueName(new UniqueNameValidation(cacheManager));
+        semanticValidatorFactory.setUniqueGuid(new UniqueGuidValidation(cacheManager));
+        semanticValidatorFactory.setDefaultLocation(new DefaultLocationValidation());
+        semanticValidatorFactory.setLocationNotAllowed(new LocationNotAllowedValidation());
+    }
+
+    private void buildCreateSubMerchantService(SemanticValidatorFactory semanticValidatorFactory) {
+        createSubMerchantService = new CreateSubMerchantService();
+        createSubMerchantService.setSemanticValidatorFactory(semanticValidatorFactory);
+        createSubMerchantService.setMerchantMapper(new MerchantMapper(new LocationMapper(), new MerchantTypeMapper()));
     }
 }

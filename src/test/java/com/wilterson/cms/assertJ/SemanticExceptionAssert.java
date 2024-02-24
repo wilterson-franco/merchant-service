@@ -1,6 +1,6 @@
 package com.wilterson.cms.assertJ;
 
-import com.wilterson.cms.common.validation.SemanticException;
+import com.wilterson.cms.common.validation.semantic.SemanticException;
 import org.assertj.core.api.AbstractAssert;
 
 public class SemanticExceptionAssert extends AbstractAssert<SemanticExceptionAssert, SemanticException> {

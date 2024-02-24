@@ -1,5 +1,6 @@
-package com.wilterson.cms.common.validation;
+package com.wilterson.cms.common.validation.semantic;
 
+import com.wilterson.cms.common.validation.Issue;
 import java.util.Collection;
 import lombok.Getter;
 
