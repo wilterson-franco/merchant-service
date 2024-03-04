@@ -21,7 +21,7 @@ public class MerchantMapperTest {
 
         // given
         var locationCommand = new LocationCommand("CAN", true);
-        var merchantCommand = new MerchantCommand("MERCHANT-NAME", MerchantTypeCommand.MULTI_MERCHANT, Collections.singleton(locationCommand));
+        var merchantCommand = new MerchantCommand("MERCHANT-NAME", MerchantTypeCommand.MULTI_MERCHANT, Collections.singletonList(locationCommand));
         var mapper = new MerchantMapper(new LocationMapper(), new MerchantTypeMapper());
 
         // when

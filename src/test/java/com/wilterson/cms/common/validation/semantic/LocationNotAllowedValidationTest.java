@@ -24,7 +24,7 @@ class LocationNotAllowedValidationTest {
         // given
         Set<Issue> issues = new HashSet<>();
         Merchant merchant = new MerchantBuilder("NAME", "GUID", MerchantType.SUB_MERCHANT)
-                .locations(Collections.singleton(new LocationBuilder("CAN").defaultLocation(true).build()))
+                .locations(Collections.singletonList(new LocationBuilder("CAN").defaultLocation(true).build()))
                 .build();
 
         // when

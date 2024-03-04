@@ -1,12 +1,12 @@
 package com.wilterson.cms.application.domain.model;
 
 import com.wilterson.cms.common.validation.semantic.Validatable;
-import com.wilterson.cms.common.validation.syntatic.SyntacticValidator;
 import jakarta.validation.constraints.NotBlank;
+import java.util.Objects;
 import lombok.Data;
 
 @Data
-public class Location implements Validatable {
+public class Location implements Comparable<Location>, Validatable {
 
     @NotBlank
     private String countryCode;
@@ -15,15 +15,12 @@ public class Location implements Validatable {
     private Location(Location.LocationBuilder builder) {
         this.countryCode = builder.countryCode;
         this.isDefault = builder.isDefault;
-
-        // syntactic validations (input validations)
-        SyntacticValidator.validate(this);
     }
 
     public static class LocationBuilder {
 
         // mandatory parameters
-        private String countryCode;
+        private final String countryCode;
 
         // optional parameters
         private boolean isDefault;
@@ -40,5 +37,26 @@ public class Location implements Validatable {
         public Location build() {
             return new Location(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Location location)) {
+            return false;
+        }
+        return Objects.equals(countryCode, location.countryCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(countryCode);
+    }
+
+    @Override
+    public int compareTo(Location other) {
+        return Objects.equals(this.getCountryCode(), other.getCountryCode()) ? 0 : -1;
     }
 }

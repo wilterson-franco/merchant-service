@@ -1,28 +1,33 @@
 package com.wilterson.cms.application.port.in;
 
+import static com.wilterson.cms.common.validation.constraint.DefaultLocationsQuantity.SINGLE;
+
+import com.wilterson.cms.common.validation.constraint.DefaultRequired;
+import com.wilterson.cms.common.validation.constraint.Unique;
+import com.wilterson.cms.common.validation.constraint.UniqueField;
 import com.wilterson.cms.common.validation.semantic.Validatable;
-import com.wilterson.cms.common.validation.syntatic.SyntacticValidator;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.util.Set;
+import java.util.List;
 
 public record MerchantCommand(
-        @NotBlank(message = "{merchant.name.required}")
+        @NotBlank
+        @Unique(value = UniqueField.NAME, message = "{merchant.name.unique}")
         String name,
         @NotNull(message = "Type can't be null")
         MerchantTypeCommand type,
-        Set<LocationCommand> locationCommands) implements Validatable {
+        @DefaultRequired(SINGLE)
+        @Unique(value = UniqueField.LOCATION, message = "{merchant.location.unique}")
+        List<@Valid LocationCommand> locationCommands) implements Validatable {
 
     public MerchantCommand(
             String name,
             MerchantTypeCommand type,
-            Set<LocationCommand> locationCommands) {
+            List<LocationCommand> locationCommands) {
 
         this.name = name;
         this.type = type;
         this.locationCommands = locationCommands;
-
-        // syntactic validation (input fields)
-        SyntacticValidator.validate(this);
     }
 }

@@ -3,7 +3,7 @@ package com.wilterson.cms.assertJ;
 import com.wilterson.cms.application.domain.model.Location;
 import com.wilterson.cms.application.domain.model.Merchant;
 import com.wilterson.cms.application.domain.model.MerchantType;
-import java.util.Set;
+import java.util.List;
 import org.assertj.core.api.AbstractAssert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -77,7 +77,7 @@ public class MerchantAssert extends AbstractAssert<MerchantAssert, Merchant> {
 
     public MerchantAssert hasLocationsSize(int size) {
         isNotNull();
-        Set<Location> actualLocations = actual.getLocations();
+        List<Location> actualLocations = actual.getLocations();
         int actualLocationsSize = !CollectionUtils.isEmpty(actualLocations) ? actualLocations.size() : 0;
         if (actualLocationsSize != size) {
             failWithMessage("Expected merchant to have %d locations but was %d.", size, actualLocationsSize);

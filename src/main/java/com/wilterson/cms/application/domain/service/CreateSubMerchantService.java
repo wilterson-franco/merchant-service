@@ -6,6 +6,7 @@ import com.wilterson.cms.common.StringGenerator;
 import com.wilterson.cms.common.validation.Issue;
 import com.wilterson.cms.common.validation.semantic.SemanticException;
 import com.wilterson.cms.common.validation.semantic.SemanticValidatorFactory;
+import jakarta.validation.Valid;
 import java.util.HashSet;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ class CreateSubMerchantService {
         this.merchantMapper = merchantMapper;
     }
 
-    Merchant create(MerchantCommand merchantCommand) {
+    Merchant create(@Valid MerchantCommand merchantCommand) {
 
         var merchant = merchantMapper.toDomainEntity(merchantCommand, StringGenerator.generate(GUID_LENGTH));
 

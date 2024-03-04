@@ -6,6 +6,7 @@ import com.wilterson.cms.application.domain.model.Location;
 import com.wilterson.cms.application.domain.model.Merchant;
 import com.wilterson.cms.common.validation.Issue;
 import com.wilterson.cms.common.validation.IssueFactory;
+import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,7 @@ public class DefaultLocationValidation implements SemanticValidator<Merchant> {
 
     private static long countDefaultLocations(Merchant merchant) {
 
-        Set<Location> locations = merchant.getLocations();
+        List<Location> locations = merchant.getLocations();
 
         if (!CollectionUtils.isEmpty(locations)) {
             return locations.stream().filter(Location::isDefault).count();

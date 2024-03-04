@@ -1,19 +1,46 @@
 package com.wilterson.cms.application.port.in;
 
+import static com.wilterson.cms.application.port.in.MerchantTypeCommand.SINGLE_MERCHANT;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
 
-import jakarta.validation.ConstraintViolationException;
+import com.wilterson.cms.common.cache.CacheManager;
+import com.wilterson.cms.common.cache.CachedEntity;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+/**
+ * This JUnit requires that a Jakarta Bean Validator and a
+ * Cache Manager beans are available in the Spring Context.
+ */
+@SpringBootTest(classes = {LocalValidatorFactoryBean.class})
 public class MerchantCommandTest {
+
+    @Autowired
+    private Validator validator;
+
+    @MockBean
+    private CacheManager cacheManager;
+
+    @BeforeEach
+    void setup() {
+        doReturn(Optional.of(new CachedEntity("CachedName", "CACHED-GUID"))).when(cacheManager).getEntityByName("CachedName");
+    }
 
     @Test
     void whenCreateHomeDepot_thenNameShouldBeHomeDepot() {
@@ -21,8 +48,8 @@ public class MerchantCommandTest {
         // given
         var locationCommand = new LocationCommand("CAN", true);
         var theHomeDepot = "The Home Depot";
-        var merchantType = MerchantTypeCommand.SINGLE_MERCHANT;
-        var locationCommands = Collections.singleton(locationCommand);
+        var merchantType = SINGLE_MERCHANT;
+        var locationCommands = Collections.singletonList(locationCommand);
 
         // when
         var merchantCommand = new MerchantCommand(theHomeDepot, merchantType, locationCommands);
@@ -37,13 +64,14 @@ public class MerchantCommandTest {
     void whenBlankName_thenItShouldThrowException(String emptyName) {
 
         // given
-        var locationCommand = new LocationCommand("CAN", true);
-        var merchantType = MerchantTypeCommand.SINGLE_MERCHANT;
-        var locationCommands = Collections.singleton(locationCommand);
+        MerchantCommand merchantCommand = new MerchantCommand(emptyName, SINGLE_MERCHANT, Collections.singletonList(new LocationCommand("CAN", true)));
 
         // when
+        Set<ConstraintViolation<MerchantCommand>> violations = validator.validate(merchantCommand);
+
         // then
-        assertThrows(ConstraintViolationException.class, () -> new MerchantCommand(emptyName, merchantType, locationCommands));
+        assertThat(violations).hasSize(1);
+        assertThat(violations.iterator().next().getMessage()).isEqualTo("must not be blank");
     }
 
     @DisplayName("given the merchant type " +
@@ -55,7 +83,7 @@ public class MerchantCommandTest {
 
         // given
         var locationCommand = new LocationCommand("CAN", true);
-        var locationCommands = Collections.singleton(locationCommand);
+        var locationCommands = Collections.singletonList(locationCommand);
         var merchantName = "MerchantName";
 
         // when
@@ -74,7 +102,7 @@ public class MerchantCommandTest {
 
         // given
         var merchantName = "MerchantName";
-        Set<LocationCommand> locationCommands = Collections.emptySet();
+        List<LocationCommand> locationCommands = Collections.emptyList();
 
         // when
         var merchantCommand = new MerchantCommand(merchantName, type, locationCommands);
@@ -84,14 +112,59 @@ public class MerchantCommandTest {
     }
 
     @Test
-    void whenCreateMerchantInvalidType_thenShouldThrowException() {
+    void whenCreateMerchantInvalidType_thenShouldListViolation() {
 
         // given
-        var merchantName = "MerchantName";
-        var locationCommands = Collections.singleton(new LocationCommand("CAN", true));
+        MerchantCommand merchantCommand = new MerchantCommand("MerchantName", null, Collections.singletonList(new LocationCommand("CAN", true)));
 
         // when
-        var exception = assertThrows(ConstraintViolationException.class, () -> new MerchantCommand(merchantName, null, locationCommands));
-        assertThat(exception).hasMessage("type: Type can't be null");
+        Set<ConstraintViolation<MerchantCommand>> violations = validator.validate(merchantCommand);
+
+        // then
+        assertThat(violations).hasSize(1);
+        assertThat(violations.iterator().next().getMessage()).isEqualTo("Type can't be null");
+    }
+
+    @Test
+    void whenNotUniqueName_thenShouldListViolation() {
+
+        // given
+        MerchantCommand merchantCommand = new MerchantCommand("CachedName", SINGLE_MERCHANT, Collections.singletonList(new LocationCommand("CAN", true)));
+
+        // when
+        Set<ConstraintViolation<MerchantCommand>> violations = validator.validate(merchantCommand);
+
+        // then
+        assertThat(violations).hasSize(1);
+        assertThat(violations.iterator().next().getMessage()).isEqualTo("Merchant name must be unique");
+    }
+
+    @Test
+    void whenDefaultLocationMissing_thenShouldListViolation() {
+
+        // given
+        MerchantCommand merchantCommand = new MerchantCommand("MerchantName", SINGLE_MERCHANT, Collections.singletonList(new LocationCommand("CAN", false)));
+
+        // when
+        Set<ConstraintViolation<MerchantCommand>> violations = validator.validate(merchantCommand);
+
+        // then
+        assertThat(violations).hasSize(1);
+        assertThat(violations.iterator().next().getMessage()).isEqualTo("Default location is required");
+    }
+
+    @Test
+    void whenLocationDuplicated_thenShouldListViolation() {
+
+        // given
+        List<LocationCommand> locations = List.of(new LocationCommand("CAN", false), new LocationCommand("CAN", true));
+        MerchantCommand merchantCommand = new MerchantCommand("MerchantName", SINGLE_MERCHANT, locations);
+
+        // when
+        Set<ConstraintViolation<MerchantCommand>> violations = validator.validate(merchantCommand);
+
+        // then
+        assertThat(violations).hasSize(1);
+        assertThat(violations.iterator().next().getMessage()).isEqualTo("Merchant already has location");
     }
 }

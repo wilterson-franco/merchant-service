@@ -10,6 +10,7 @@ import com.wilterson.cms.common.validation.Issue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +39,7 @@ class DefaultLocationValidationTest {
         // given
         Set<Issue> issues = new HashSet<>();
         var missingDefaultLocationMerchant = new MerchantBuilder("NAME", "GUID", MerchantType.SUB_MERCHANT)
-                .locations(Collections.singleton(new LocationBuilder("CAN").defaultLocation(false).build()))
+                .locations(Collections.singletonList(new LocationBuilder("CAN").defaultLocation(false).build()))
                 .build();
 
         // when
@@ -54,7 +55,7 @@ class DefaultLocationValidationTest {
 
         // given
         Set<Issue> issues = new HashSet<>();
-        var twoDefaultLocations = Set.of(new LocationBuilder("CAN").defaultLocation(true).build(), new LocationBuilder("USA").defaultLocation(true).build());
+        var twoDefaultLocations = List.of(new LocationBuilder("CAN").defaultLocation(true).build(), new LocationBuilder("USA").defaultLocation(true).build());
         var twoDefaultLocationsMerchant = new MerchantBuilder("NAME", "GUID", MerchantType.SUB_MERCHANT)
                 .locations(twoDefaultLocations)
                 .build();

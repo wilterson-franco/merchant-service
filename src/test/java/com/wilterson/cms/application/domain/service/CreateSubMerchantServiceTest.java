@@ -48,7 +48,7 @@ class CreateSubMerchantServiceTest {
     void whenCreatingSubMerchant_thenSubMerchantValidationMethodShouldBeCalled() {
 
         // given
-        var command = new MerchantCommand("MerchantNameA", MULTI_MERCHANT, Collections.emptySet());
+        var command = new MerchantCommand("MerchantNameA", MULTI_MERCHANT, Collections.emptyList());
 
         // when
         doReturn(mock(SemanticValidator.class)).when(semanticValidatorFactory).subMerchantSemanticValidator();
@@ -65,7 +65,7 @@ class CreateSubMerchantServiceTest {
     void whenCreatingSubMerchant_thenSemanticValidationShouldRun() {
 
         // given
-        var command = new MerchantCommand("MerchantNameA", MULTI_MERCHANT, Collections.emptySet());
+        var command = new MerchantCommand("MerchantNameA", MULTI_MERCHANT, Collections.emptyList());
         var cachedEntity = new CachedEntity("MerchantNameA", "SOME-GUID");
 
         // when

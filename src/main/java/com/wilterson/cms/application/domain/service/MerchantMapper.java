@@ -7,10 +7,14 @@ import com.wilterson.cms.application.domain.model.MerchantType;
 import com.wilterson.cms.application.port.in.LocationCommand;
 import com.wilterson.cms.application.port.in.MerchantCommand;
 import com.wilterson.cms.application.port.in.MerchantTypeCommand;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 @Service
 @RequiredArgsConstructor
@@ -19,18 +23,19 @@ class MerchantMapper {
     private final LocationMapper locationMapper;
     private final MerchantTypeMapper merchantTypeMapper;
 
-    Merchant toDomainEntity(MerchantCommand command, String guid) {
+    @Validated
+    Merchant toDomainEntity(@Valid MerchantCommand command, @NotBlank String guid) {
 
         return new MerchantBuilder(command.name(), guid, toMerchantTypeDomainEntity(command.type()))
                 .locations(toLocationDomainEntities(command.locationCommands()))
                 .build();
     }
 
-    private Set<Location> toLocationDomainEntities(Set<LocationCommand> locationCommands) {
+    private List<Location> toLocationDomainEntities(List<LocationCommand> locationCommands) {
         return locationCommands
                 .stream()
                 .map(locationMapper::toDomainEntity)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     private MerchantType toMerchantTypeDomainEntity(MerchantTypeCommand merchantTypeCommand) {
