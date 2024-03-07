@@ -1,9 +1,9 @@
 package com.wilterson.cms.application.port.in;
 
-import com.wilterson.cms.application.domain.model.Merchant;
+import com.wilterson.cms.application.domain.model.SubMerchant;
 
 @FunctionalInterface
 public interface CreateSubMerchantUseCase {
 
-    Merchant create(MerchantCommand command);
+    SubMerchant create(MerchantCommand command);
 }

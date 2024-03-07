@@ -1,12 +1,11 @@
 package com.wilterson.cms.application.domain.model;
 
-import com.wilterson.cms.common.validation.semantic.Validatable;
 import jakarta.validation.constraints.NotBlank;
 import java.util.Objects;
 import lombok.Data;
 
 @Data
-public class Location implements Comparable<Location>, Validatable {
+public class Location implements Comparable<Location> {
 
     @NotBlank
     private String countryCode;

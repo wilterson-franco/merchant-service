@@ -5,7 +5,7 @@ import static com.wilterson.cms.assertJ.MerchantAssert.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wilterson.cms.application.domain.model.Location;
-import com.wilterson.cms.application.domain.model.Merchant;
+import com.wilterson.cms.application.domain.model.SubMerchant;
 import com.wilterson.cms.application.domain.model.MerchantType;
 import com.wilterson.cms.application.port.in.LocationCommand;
 import com.wilterson.cms.application.port.in.MerchantCommand;
@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
-public class MerchantMapperTest {
+public class SubMerchantMapperTest {
 
     @Test
     void mapToDomainEntity() {
@@ -25,19 +25,19 @@ public class MerchantMapperTest {
         var mapper = new MerchantMapper(new LocationMapper(), new MerchantTypeMapper());
 
         // when
-        Merchant merchant = mapper.toDomainEntity(merchantCommand, "GUID");
+        SubMerchant subMerchant = mapper.toDomainEntity(merchantCommand, "GUID");
 
         // then merchant
-        assertThat(merchant).isNotNull();
-        assertThat(merchant).nameEqualsTo("MERCHANT-NAME");
-        assertThat(merchant).typeEqualsTo(MerchantType.MULTI_MERCHANT);
-        assertThat(merchant).guidEqualsTo("GUID");
-        assertThat(merchant).hasLocationsSize(1);
-        assertThat(merchant).hasDefaultLocation();
-        assertThat(merchant).containsLocationByCountryCodeIgnoreCase("CAN");
+        assertThat(subMerchant).isNotNull();
+        assertThat(subMerchant).nameEqualsTo("MERCHANT-NAME");
+        assertThat(subMerchant).typeEqualsTo(MerchantType.MULTI_MERCHANT);
+        assertThat(subMerchant).guidEqualsTo("GUID");
+        assertThat(subMerchant).hasLocationsSize(1);
+        assertThat(subMerchant).hasDefaultLocation();
+        assertThat(subMerchant).containsLocationByCountryCodeIgnoreCase("CAN");
 
         // and then location
-        Optional<Location> optional = merchant.getLocations().stream().filter(l -> "CAN".equalsIgnoreCase(l.getCountryCode())).findFirst();
+        Optional<Location> optional = subMerchant.getLocations().stream().filter(l -> "CAN".equalsIgnoreCase(l.getCountryCode())).findFirst();
         assertThat(optional).isPresent();
         Location location = optional.get();
         assertThat(location).countryCodeEqualsTo("CAN");

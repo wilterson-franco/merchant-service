@@ -29,7 +29,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
  * Cache Manager beans are available in the Spring Context.
  */
 @SpringBootTest(classes = {LocalValidatorFactoryBean.class})
-public class MerchantCommandTest {
+public class SubMerchantCommandTest {
 
     @Autowired
     private Validator validator;

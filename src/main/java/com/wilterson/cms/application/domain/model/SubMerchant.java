@@ -7,14 +7,13 @@ import com.wilterson.cms.common.validation.constraint.CheckCase;
 import com.wilterson.cms.common.validation.constraint.DefaultRequired;
 import com.wilterson.cms.common.validation.constraint.Unique;
 import com.wilterson.cms.common.validation.constraint.UniqueField;
-import com.wilterson.cms.common.validation.semantic.Validatable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.Data;
 
 @Data
-public class Merchant implements Validatable {
+public class SubMerchant {
 
     @CheckCase(value = CaseMode.UPPER)
     @NotBlank
@@ -32,7 +31,7 @@ public class Merchant implements Validatable {
     @Unique(value = UniqueField.LOCATION, message = "{merchant.location.unique}")
     private final List<Location> locations;
 
-    private Merchant(MerchantBuilder builder) {
+    private SubMerchant(MerchantBuilder builder) {
         this.name = builder.name;
         this.type = builder.type;
         this.guid = builder.guid;
@@ -60,8 +59,8 @@ public class Merchant implements Validatable {
             return this;
         }
 
-        public Merchant build() {
-            return new Merchant(this);
+        public SubMerchant build() {
+            return new SubMerchant(this);
         }
     }
 }

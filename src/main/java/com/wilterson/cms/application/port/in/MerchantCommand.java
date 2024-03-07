@@ -5,7 +5,6 @@ import static com.wilterson.cms.common.validation.constraint.DefaultLocationsQua
 import com.wilterson.cms.common.validation.constraint.DefaultRequired;
 import com.wilterson.cms.common.validation.constraint.Unique;
 import com.wilterson.cms.common.validation.constraint.UniqueField;
-import com.wilterson.cms.common.validation.semantic.Validatable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +18,7 @@ public record MerchantCommand(
         MerchantTypeCommand type,
         @DefaultRequired(SINGLE)
         @Unique(value = UniqueField.LOCATION, message = "{merchant.location.unique}")
-        List<@Valid LocationCommand> locationCommands) implements Validatable {
+        List<@Valid LocationCommand> locationCommands) {
 
     public MerchantCommand(
             String name,

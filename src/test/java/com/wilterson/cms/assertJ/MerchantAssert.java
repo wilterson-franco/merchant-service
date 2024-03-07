@@ -1,20 +1,20 @@
 package com.wilterson.cms.assertJ;
 
 import com.wilterson.cms.application.domain.model.Location;
-import com.wilterson.cms.application.domain.model.Merchant;
+import com.wilterson.cms.application.domain.model.SubMerchant;
 import com.wilterson.cms.application.domain.model.MerchantType;
 import java.util.List;
 import org.assertj.core.api.AbstractAssert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-public class MerchantAssert extends AbstractAssert<MerchantAssert, Merchant> {
+public class MerchantAssert extends AbstractAssert<MerchantAssert, SubMerchant> {
 
-    public MerchantAssert(Merchant merchant) {
-        super(merchant, MerchantAssert.class);
+    public MerchantAssert(SubMerchant subMerchant) {
+        super(subMerchant, MerchantAssert.class);
     }
 
-    public static MerchantAssert assertThat(Merchant actual) {
+    public static MerchantAssert assertThat(SubMerchant actual) {
         return new MerchantAssert(actual);
     }
 

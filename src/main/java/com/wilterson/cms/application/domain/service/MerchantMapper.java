@@ -1,8 +1,8 @@
 package com.wilterson.cms.application.domain.service;
 
 import com.wilterson.cms.application.domain.model.Location;
-import com.wilterson.cms.application.domain.model.Merchant;
-import com.wilterson.cms.application.domain.model.Merchant.MerchantBuilder;
+import com.wilterson.cms.application.domain.model.SubMerchant;
+import com.wilterson.cms.application.domain.model.SubMerchant.MerchantBuilder;
 import com.wilterson.cms.application.domain.model.MerchantType;
 import com.wilterson.cms.application.port.in.LocationCommand;
 import com.wilterson.cms.application.port.in.MerchantCommand;
@@ -10,7 +10,6 @@ import com.wilterson.cms.application.port.in.MerchantTypeCommand;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,8 +22,8 @@ class MerchantMapper {
     private final LocationMapper locationMapper;
     private final MerchantTypeMapper merchantTypeMapper;
 
-    @Validated
-    Merchant toDomainEntity(@Valid MerchantCommand command, @NotBlank String guid) {
+    @Valid
+    SubMerchant toDomainEntity(@Valid MerchantCommand command, @NotBlank String guid) {
 
         return new MerchantBuilder(command.name(), guid, toMerchantTypeDomainEntity(command.type()))
                 .locations(toLocationDomainEntities(command.locationCommands()))

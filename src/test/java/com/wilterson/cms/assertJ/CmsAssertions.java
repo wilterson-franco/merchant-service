@@ -1,17 +1,12 @@
 package com.wilterson.cms.assertJ;
 
 import com.wilterson.cms.application.domain.model.Location;
-import com.wilterson.cms.application.domain.model.Merchant;
+import com.wilterson.cms.application.domain.model.SubMerchant;
 import com.wilterson.cms.common.validation.Issue;
-import com.wilterson.cms.common.validation.semantic.SemanticException;
 
 public abstract class CmsAssertions {
 
-    public static <T extends SemanticException> SemanticExceptionAssert assertThat(T actual) {
-        return SemanticExceptionAssert.assertThat(actual);
-    }
-
-    public static <T extends Merchant> MerchantAssert assertThat(T actual) {
+    public static <T extends SubMerchant> MerchantAssert assertThat(T actual) {
         return MerchantAssert.assertThat(actual);
     }
 

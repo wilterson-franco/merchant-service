@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 import com.wilterson.cms.application.domain.model.Location.LocationBuilder;
-import com.wilterson.cms.application.domain.model.Merchant.MerchantBuilder;
+import com.wilterson.cms.application.domain.model.SubMerchant.MerchantBuilder;
 import com.wilterson.cms.common.cache.CacheManager;
 import com.wilterson.cms.common.cache.CachedEntity;
 import jakarta.validation.ConstraintViolation;
@@ -31,7 +31,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
  * Cache Manager beans are available in the Spring Context.
  */
 @SpringBootTest(classes = {LocalValidatorFactoryBean.class})
-class MerchantTest {
+class SubMerchantTest {
 
     @Autowired
     private Validator validator;
@@ -52,12 +52,12 @@ class MerchantTest {
     void whenBlankName_thenItShouldListViolation(String emptyName) {
 
         // given
-        Merchant merchant = new MerchantBuilder(emptyName, "GUID", MerchantType.SINGLE_MERCHANT)
+        SubMerchant subMerchant = new MerchantBuilder(emptyName, "GUID", MerchantType.SINGLE_MERCHANT)
                 .locations(Collections.singletonList(new LocationBuilder("CAN").defaultLocation(true).build()))
                 .build();
 
         // when
-        Set<ConstraintViolation<Merchant>> violations = validator.validate(merchant);
+        Set<ConstraintViolation<SubMerchant>> violations = validator.validate(subMerchant);
 
         // then
         assertThat(violations).hasSize(1);
@@ -107,12 +107,12 @@ class MerchantTest {
     void whenCreateMerchantInvalidType_thenShouldListViolation() {
 
         // given
-        Merchant merchant = new MerchantBuilder("MerchantName", "GUID", null)
+        SubMerchant subMerchant = new MerchantBuilder("MerchantName", "GUID", null)
                 .locations(Collections.singletonList(new LocationBuilder("CAN").defaultLocation(true).build()))
                 .build();
 
         // when
-        Set<ConstraintViolation<Merchant>> violations = validator.validate(merchant);
+        Set<ConstraintViolation<SubMerchant>> violations = validator.validate(subMerchant);
 
         // then
         assertThat(violations).hasSize(1);
@@ -123,12 +123,12 @@ class MerchantTest {
     void whenGuidInLowerCase_thenShouldListViolation() {
 
         // given
-        Merchant merchant = new MerchantBuilder("MerchantName", "abcdef", SUB_MERCHANT)
+        SubMerchant subMerchant = new MerchantBuilder("MerchantName", "abcdef", SUB_MERCHANT)
                 .locations(Collections.singletonList(new LocationBuilder("CAN").defaultLocation(true).build()))
                 .build();
 
         // when
-        Set<ConstraintViolation<Merchant>> violations = validator.validate(merchant);
+        Set<ConstraintViolation<SubMerchant>> violations = validator.validate(subMerchant);
 
         // then
         assertThat(violations).hasSize(1);
@@ -139,12 +139,12 @@ class MerchantTest {
     void whenNotUniqueName_thenShouldListViolation() {
 
         // given
-        Merchant merchant = new MerchantBuilder("CachedName", "GUID", SUB_MERCHANT)
+        SubMerchant subMerchant = new MerchantBuilder("CachedName", "GUID", SUB_MERCHANT)
                 .locations(Collections.singletonList(new LocationBuilder("CAN").defaultLocation(true).build()))
                 .build();
 
         // when
-        Set<ConstraintViolation<Merchant>> violations = validator.validate(merchant);
+        Set<ConstraintViolation<SubMerchant>> violations = validator.validate(subMerchant);
 
         // then
         assertThat(violations).hasSize(1);
@@ -155,12 +155,12 @@ class MerchantTest {
     void whenNotUniqueGuid_thenShouldListViolation() {
 
         // given
-        Merchant merchant = new MerchantBuilder("MerchantName", "CACHED-GUID", SUB_MERCHANT)
+        SubMerchant subMerchant = new MerchantBuilder("MerchantName", "CACHED-GUID", SUB_MERCHANT)
                 .locations(Collections.singletonList(new LocationBuilder("CAN").defaultLocation(true).build()))
                 .build();
 
         // when
-        Set<ConstraintViolation<Merchant>> violations = validator.validate(merchant);
+        Set<ConstraintViolation<SubMerchant>> violations = validator.validate(subMerchant);
 
         // then
         assertThat(violations).hasSize(1);
@@ -171,12 +171,12 @@ class MerchantTest {
     void whenDefaultLocationMissing_thenShouldListViolation() {
 
         // given
-        Merchant merchant = new MerchantBuilder("MerchantName", "GUID", SUB_MERCHANT)
+        SubMerchant subMerchant = new MerchantBuilder("MerchantName", "GUID", SUB_MERCHANT)
                 .locations(Collections.singletonList(new LocationBuilder("CAN").defaultLocation(false).build()))
                 .build();
 
         // when
-        Set<ConstraintViolation<Merchant>> violations = validator.validate(merchant);
+        Set<ConstraintViolation<SubMerchant>> violations = validator.validate(subMerchant);
 
         // then
         assertThat(violations).hasSize(1);
@@ -191,12 +191,12 @@ class MerchantTest {
                 new LocationBuilder("CAN").defaultLocation(false).build(),
                 new LocationBuilder("CAN").defaultLocation(true).build());
 
-        Merchant merchant = new MerchantBuilder("MerchantName", "GUID", SUB_MERCHANT)
+        SubMerchant subMerchant = new MerchantBuilder("MerchantName", "GUID", SUB_MERCHANT)
                 .locations(locations)
                 .build();
 
         // when
-        Set<ConstraintViolation<Merchant>> violations = validator.validate(merchant);
+        Set<ConstraintViolation<SubMerchant>> violations = validator.validate(subMerchant);
 
         // then
         assertThat(violations).hasSize(1);
