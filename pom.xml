@@ -73,6 +73,21 @@
                 <groupId>org.openrewrite.maven</groupId>
                 <artifactId>rewrite-maven-plugin</artifactId>
                 <version>5.23.1</version>
+                <configuration>
+                    <activeRecipes>
+                        <recipe>com.wilterson.AddLicenseHeader</recipe>
+                        <recipe>org.openrewrite.java.format.EmptyNewlineAtEndOfFile</recipe>
+                        <recipe>org.openrewrite.java.format.AutoFormat</recipe>
+                        <recipe>org.openrewrite.java.security.JavaSecurityBestPractices</recipe>
+                    </activeRecipes>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-java-security</artifactId>
+                        <version>2.5.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

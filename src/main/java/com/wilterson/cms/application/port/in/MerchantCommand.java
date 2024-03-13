@@ -1,3 +1,6 @@
+/*
+ * Copyright 2024 Wilterson Franco
+ */
 package com.wilterson.cms.application.port.in;
 
 import static com.wilterson.cms.common.validation.constraint.DefaultLocationsQuantity.SINGLE;

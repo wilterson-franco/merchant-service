@@ -1,3 +1,6 @@
+/*
+ * Copyright 2024 Wilterson Franco
+ */
 package com.wilterson.cms.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
