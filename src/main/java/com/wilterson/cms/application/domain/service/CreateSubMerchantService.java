@@ -1,3 +1,6 @@
+/*
+ * Copyright 2024 Wilterson Franco
+ */
 package com.wilterson.cms.application.domain.service;
 
 import com.wilterson.cms.application.domain.model.SubMerchant;

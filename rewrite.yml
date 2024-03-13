@@ -1,0 +1,7 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.wilterson.AddLicenseHeader
+displayName: Add license header
+recipeList:
+  - org.openrewrite.java.AddLicenseHeader:
+      licenseText: Copyright ${CURRENT_YEAR} Wilterson Franco
