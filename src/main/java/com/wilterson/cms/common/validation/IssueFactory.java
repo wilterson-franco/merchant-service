@@ -1,6 +1,7 @@
 /*
  * Copyright 2024 Wilterson Franco
  */
+
 package com.wilterson.cms.common.validation;
 
 import static com.wilterson.cms.common.validation.IssueFactory.ReasonCode.INVALID_DATA;

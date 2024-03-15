@@ -1,6 +1,7 @@
 /*
  * Copyright 2024 Wilterson Franco
  */
+
 package com.wilterson.cms.common.validation.constraint;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
@@ -20,7 +21,7 @@ import java.lang.annotation.Target;
 
 @Target({FIELD, METHOD, PARAMETER, ANNOTATION_TYPE, TYPE_USE})
 @Retention(RUNTIME)
-@Constraint(validatedBy = {UniqueStringValidator.class, UniqueLocationValidator.class, UniqueLocationCommandValidator.class})
+@Constraint(validatedBy = {UniqueStringValidator.class, UniqueLocationCommandValidator.class})
 @Documented
 @Repeatable(List.class)
 public @interface Unique {

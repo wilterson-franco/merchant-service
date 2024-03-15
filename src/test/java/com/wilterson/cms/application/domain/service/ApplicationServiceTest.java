@@ -1,13 +1,14 @@
 /*
  * Copyright 2024 Wilterson Franco
  */
+
 package com.wilterson.cms.application.domain.service;
 
-import static com.wilterson.cms.application.port.in.MerchantTypeCommand.MULTI_MERCHANT;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.wilterson.cms.application.port.in.MerchantCommand;
+import com.wilterson.cms.application.port.in.SubMerchantCommand;
+import com.wilterson.cms.common.validation.SyntacticValidator;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +22,9 @@ class ApplicationServiceTest {
     @Mock
     private CreateSubMerchantService createSubMerchantService;
 
+    @Mock
+    private SyntacticValidator syntacticValidator;
+
     @InjectMocks
     private ApplicationService applicationService;
 
@@ -28,12 +32,13 @@ class ApplicationServiceTest {
     void whenCreateSubMerchant_thenServiceCreateAndValidatorShouldBeCalledOnce() {
 
         // given
-        var command = new MerchantCommand("MerchantName", MULTI_MERCHANT, Collections.emptyList());
+        var command = new SubMerchantCommand("MerchantName", Collections.emptyList());
 
         // when
-        applicationService.create(command);
+        applicationService.createSubMerchant(command);
 
         // then
-        verify(createSubMerchantService, times(1)).create(command);
+        verify(syntacticValidator, times(1)).validate(command);
+        verify(createSubMerchantService, times(1)).createSubMerchant(command);
     }
 }

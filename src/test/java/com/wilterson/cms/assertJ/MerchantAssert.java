@@ -1,11 +1,11 @@
 /*
  * Copyright 2024 Wilterson Franco
  */
+
 package com.wilterson.cms.assertJ;
 
 import com.wilterson.cms.application.domain.model.Location;
 import com.wilterson.cms.application.domain.model.SubMerchant;
-import com.wilterson.cms.application.domain.model.MerchantType;
 import java.util.List;
 import org.assertj.core.api.AbstractAssert;
 import org.springframework.util.CollectionUtils;
@@ -25,14 +25,6 @@ public class MerchantAssert extends AbstractAssert<MerchantAssert, SubMerchant> 
         isNotNull();
         if (!actual.getName().equals(merchantName)) {
             failWithMessage("Expected merchant to have name %s but was %s.", merchantName, actual.getName());
-        }
-        return this;
-    }
-
-    public MerchantAssert typeEqualsTo(MerchantType merchantType) {
-        isNotNull();
-        if (actual.getType() != merchantType) {
-            failWithMessage("Expected merchant to have name %s but was %s.", merchantType, actual.getType());
         }
         return this;
     }
