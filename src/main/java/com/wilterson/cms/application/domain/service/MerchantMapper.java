@@ -1,34 +1,33 @@
 /*
  * Copyright 2024 Wilterson Franco
  */
+
 package com.wilterson.cms.application.domain.service;
 
 import com.wilterson.cms.application.domain.model.Location;
 import com.wilterson.cms.application.domain.model.SubMerchant;
-import com.wilterson.cms.application.domain.model.SubMerchant.MerchantBuilder;
-import com.wilterson.cms.application.domain.model.MerchantType;
+import com.wilterson.cms.application.domain.model.SubMerchant.SubMerchantBuilder;
 import com.wilterson.cms.application.port.in.LocationCommand;
-import com.wilterson.cms.application.port.in.MerchantCommand;
-import com.wilterson.cms.application.port.in.MerchantTypeCommand;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
+import com.wilterson.cms.application.port.in.SubMerchantCommand;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 @Service
-@RequiredArgsConstructor
 class MerchantMapper {
 
     private final LocationMapper locationMapper;
-    private final MerchantTypeMapper merchantTypeMapper;
 
-    @Valid
-    SubMerchant toDomainEntity(@Valid MerchantCommand command, @NotBlank String guid) {
+    public MerchantMapper(LocationMapper locationMapper) {
+        this.locationMapper = locationMapper;
+    }
 
-        return new MerchantBuilder(command.name(), guid, toMerchantTypeDomainEntity(command.type()))
+    SubMerchant toDomainEntity(SubMerchantCommand command, String guid) {
+
+        Objects.requireNonNull(guid);
+
+        return new SubMerchantBuilder(command.name(), guid)
                 .locations(toLocationDomainEntities(command.locationCommands()))
                 .build();
     }
@@ -38,9 +37,5 @@ class MerchantMapper {
                 .stream()
                 .map(locationMapper::toDomainEntity)
                 .collect(Collectors.toList());
-    }
-
-    private MerchantType toMerchantTypeDomainEntity(MerchantTypeCommand merchantTypeCommand) {
-        return merchantTypeMapper.toDomainEntity(merchantTypeCommand);
     }
 }

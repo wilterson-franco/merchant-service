@@ -1,16 +1,15 @@
 /*
  * Copyright 2024 Wilterson Franco
  */
+
 package com.wilterson.cms.application.domain.model;
 
-import jakarta.validation.constraints.NotBlank;
 import java.util.Objects;
 import lombok.Data;
 
 @Data
 public class Location implements Comparable<Location> {
 
-    @NotBlank
     private String countryCode;
     private boolean isDefault;
 

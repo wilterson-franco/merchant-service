@@ -1,6 +1,7 @@
 /*
  * Copyright 2024 Wilterson Franco
  */
+
 package com.wilterson.cms.common.validation.constraint;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
