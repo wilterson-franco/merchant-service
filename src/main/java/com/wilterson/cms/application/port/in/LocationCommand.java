@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.Objects;
 
 public record LocationCommand(
-
         @NotBlank(message = "countryCode can't be empty")
         String countryCode,
         boolean isDefault
