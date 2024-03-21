@@ -18,7 +18,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 @SpringBootApplication
 public class MerchantServiceApplication {
@@ -40,13 +39,6 @@ public class MerchantServiceApplication {
         LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
         localValidatorFactoryBean.setValidationMessageSource(messageSource);
         return localValidatorFactoryBean;
-    }
-
-    @Bean
-    public MethodValidationPostProcessor methodValidationPostProcessor(LocalValidatorFactoryBean validator) {
-        MethodValidationPostProcessor processor = new MethodValidationPostProcessor();
-        processor.setValidator(validator);
-        return processor;
     }
 }
 
