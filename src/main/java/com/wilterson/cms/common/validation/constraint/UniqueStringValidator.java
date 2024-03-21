@@ -7,13 +7,15 @@ package com.wilterson.cms.common.validation.constraint;
 import com.wilterson.cms.common.cache.CacheManager;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class UniqueStringValidator implements ConstraintValidator<Unique, String> {
 
     private final CacheManager cacheManager;
     private UniqueField uniqueField;
+
+    public UniqueStringValidator(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
 
     @Override
     public void initialize(Unique constraintAnnotation) {

@@ -60,7 +60,7 @@ public class SubSubMerchantCommandTest {
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {" ", "\t", "\n"})
-    void whenBlankName_thenItShouldThrowException(String emptyName) {
+    void whenBlankName_thenShouldListViolation(String emptyName) {
 
         // given
         SubMerchantCommand subMerchantCommand = new SubMerchantCommand(emptyName, Collections.singletonList(new LocationCommand("CAN", true)));

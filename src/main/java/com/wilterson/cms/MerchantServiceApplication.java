@@ -4,12 +4,21 @@
 
 package com.wilterson.cms;
 
+import com.wilterson.cms.application.port.in.CreateSubMerchantUseCase;
+import com.wilterson.cms.application.port.in.LocationCommand;
+import com.wilterson.cms.application.port.in.SubMerchantCommand;
+import jakarta.validation.ConstraintViolationException;
+import java.util.Collections;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 @SpringBootApplication
 public class MerchantServiceApplication {
@@ -27,9 +36,42 @@ public class MerchantServiceApplication {
     }
 
     @Bean
-    public LocalValidatorFactoryBean validator() {
+    public LocalValidatorFactoryBean validator(MessageSource messageSource) {
         LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
-        localValidatorFactoryBean.setValidationMessageSource(messageSource());
+        localValidatorFactoryBean.setValidationMessageSource(messageSource);
         return localValidatorFactoryBean;
+    }
+
+    @Bean
+    public MethodValidationPostProcessor methodValidationPostProcessor(LocalValidatorFactoryBean validator) {
+        MethodValidationPostProcessor processor = new MethodValidationPostProcessor();
+        processor.setValidator(validator);
+        return processor;
+    }
+}
+
+@Component
+class MyRunner implements CommandLineRunner {
+
+    private CreateSubMerchantUseCase createSubMerchantUseCase;
+
+    @Autowired
+    public void setCreateSubMerchantUseCase(CreateSubMerchantUseCase createSubMerchantUseCase) {
+        this.createSubMerchantUseCase = createSubMerchantUseCase;
+    }
+
+    @Override
+    public void run(String... args) {
+
+        var subMerchantCommandWithoutName = new SubMerchantCommand(null, Collections.singletonList(new LocationCommand("CAN", true)));
+
+        try {
+            createSubMerchantUseCase.createSubMerchant(subMerchantCommandWithoutName);
+        } catch (ConstraintViolationException e) {
+            System.out.println("<<< CONSTRAINT VIOLATION >>>");
+            return;
+        }
+
+        System.out.println("<<< NO EXCEPTIONS >>>");
     }
 }
