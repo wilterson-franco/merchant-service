@@ -9,5 +9,5 @@ import com.wilterson.cms.application.domain.model.SubMerchant;
 @FunctionalInterface
 public interface CreateSubMerchantUseCase {
 
-    SubMerchant createSubMerchant(SubMerchantCommand command);
+    SubMerchant executeCommand(SubMerchantCommand command);
 }

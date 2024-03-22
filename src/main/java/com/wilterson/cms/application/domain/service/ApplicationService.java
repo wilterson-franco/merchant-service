@@ -21,7 +21,7 @@ public class ApplicationService implements CreateSubMerchantUseCase {
     }
 
     @Override
-    public SubMerchant createSubMerchant(SubMerchantCommand subMerchantCommand) {
+    public SubMerchant executeCommand(SubMerchantCommand subMerchantCommand) {
 
         return createSubMerchantService.createSubMerchant(subMerchantCommand);
     }

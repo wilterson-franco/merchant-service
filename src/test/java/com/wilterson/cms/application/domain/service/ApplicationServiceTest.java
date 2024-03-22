@@ -31,7 +31,7 @@ class ApplicationServiceTest {
         var command = new SubMerchantCommand("MERCHANT-NAME", Collections.emptyList());
 
         // when
-        applicationService.createSubMerchant(command);
+        applicationService.executeCommand(command);
 
         // then
         verify(createSubMerchantService, times(1)).createSubMerchant(command);

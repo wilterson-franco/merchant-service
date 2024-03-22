@@ -58,7 +58,7 @@ class MyRunner implements CommandLineRunner {
         var subMerchantCommandWithoutName = new SubMerchantCommand(null, Collections.singletonList(new LocationCommand("CAN", true)));
 
         try {
-            createSubMerchantUseCase.createSubMerchant(subMerchantCommandWithoutName);
+            createSubMerchantUseCase.executeCommand(subMerchantCommandWithoutName);
         } catch (ConstraintViolationException e) {
             System.out.println("<<< CONSTRAINT VIOLATION >>>");
             return;
