@@ -6,11 +6,11 @@ package com.wilterson.cms.application.domain.model;
 
 import java.util.List;
 
-public class SubMerchant extends Merchant {
+public class MultiMerchant extends Merchant {
 
     private final List<Location> locations;
 
-    private SubMerchant(SubMerchantBuilder builder) {
+    private MultiMerchant(MultiMerchantBuilder builder) {
         super(builder.getName(), builder.getGuid());
         this.locations = builder.locations;
     }
@@ -19,24 +19,24 @@ public class SubMerchant extends Merchant {
         return locations;
     }
 
-    public static class SubMerchantBuilder extends MerchantBuilder<SubMerchant> {
+    public static class MultiMerchantBuilder extends MerchantBuilder<MultiMerchant> {
 
         // optional parameters
         private List<Location> locations;
 
         // mandatory parameters enforced through the constructor
-        public SubMerchantBuilder(final String name, final String guid) {
+        public MultiMerchantBuilder(final String name, final String guid) {
             super(name, guid);
         }
 
-        public SubMerchantBuilder locations(final List<Location> locations) {
+        public MultiMerchantBuilder locations(final List<Location> locations) {
             this.locations = locations;
             return this;
         }
 
         @Override
-        public SubMerchant build() {
-            return new SubMerchant(this);
+        public MultiMerchant build() {
+            return new MultiMerchant(this);
         }
     }
 }
