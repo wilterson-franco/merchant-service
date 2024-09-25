@@ -22,3 +22,6 @@ https://start.spring.io/#!type=maven-project&language=java&platformVersion=3.2.2
     - The domain service objects (use case implementations) will throw the exceptions
     - The ApplicationService must catch the exception and categorize them into WARNING, SKIP, or ERROR.
 3. Internationalization of the error messages
+
+## Useful References
+1. Have a look at the article [Annotation-free Spring](https://foojay.io/today/annotation-free-spring/). It provides useful tips for not having Spring annotations in certain layers of the application.
